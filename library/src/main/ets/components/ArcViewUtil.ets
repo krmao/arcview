@@ -292,5 +292,48 @@ export default class ArcViewUtil {
     return result;
   }
 
+  /**
+   * 1. 半径是否在 内外圆环半径之间
+   * 2. 角度是否在范围角度之间
+   *
+   * @param xPx
+   * @param yPx
+   * @param centerXpx
+   * @param centerYpx
+   * @param innerRadiusPx
+   * @param outerRadiusPx
+   * @param startAngle
+   * @param endAngle
+   * @returns
+   */
+  public isPointInSectorRing(xPx: number, yPx: number, centerXpx: number, centerYpx: number, innerRadiusPx: number,
+    outerRadiusPx: number, startAngle: number, endAngle: number): boolean {
+    const dx = xPx - centerXpx;
+    const dy = yPx - centerYpx;
+
+    // 计算点到圆心的距离
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // 判断距离是否在圆环的半径范围内
+    if (distance < innerRadiusPx || distance > outerRadiusPx) {
+      return false;
+    }
+
+    // 计算点的角度(斜边与正 x轴的夹角, 逆时针为正)，atan2 返回的是弧度, 逆时针为正, 从正 x轴 逆时针为正 360度
+    let angleDegree = Math.atan2(dy, dx) * (180 / Math.PI);
+
+    // 将角度转换为 [0, 360) 的范围
+    if (angleDegree < 0) {
+      angleDegree += 360;
+    }
+
+    // 判断角度是否在扇形的范围内
+    if (startAngle <= endAngle) {
+      return angleDegree >= startAngle && angleDegree <= endAngle;
+    } else {
+      return angleDegree >= startAngle || angleDegree <= endAngle;
+    }
+  }
+
   //endregion
 }
