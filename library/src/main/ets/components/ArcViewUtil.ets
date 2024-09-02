@@ -45,7 +45,7 @@ export default class ArcViewUtil {
   // 整个画布的高 外圆直径 px
   public strokeWidthVp: number = pp(8);
 
-  constructor(isDebug: boolean, maxAngleDegree: ANGLE_DEGREE , widthVp: number,
+  constructor(isDebug: boolean, maxAngleDegree: ANGLE_DEGREE, widthVp: number,
     heightVp: number, strokeWidthVp: number) {
     this.isDebug = isDebug;
     this.maxAngleDegree = maxAngleDegree;
@@ -75,8 +75,10 @@ export default class ArcViewUtil {
   // maxAngleDegree < 180 时 起点与Y轴的夹角
   //region 这两种方式都可以用, 取决于渐变颜色从哪里开始, 这里视觉稿是从 0度开始到360度结束, 然后裁剪显示, 保持高保证
   // gauge 默认 从开始绘制的地方开始渐变到结束绘制的地方结束渐变, 一共7种颜色, 删除收尾两种颜色也能接近视觉稿
-  // private startAngleDegreeForGauge = () => (360 - this.maxAngleDegree) / 2 + 180 // 保持 Gauge 开角垂直向下
-  // private endAngleDegreeForGauge = () => -(360 - this.maxAngleDegree) / 2 + 180 // 保持 Gauge 开角垂直向下
+  public startAngleDegreeForGaugeOrigin = () => (360 - this.maxAngleDegree) / 2 + 180
+  // 保持 Gauge 开角垂直向下
+  public endAngleDegreeForGaugeOrigin = () => -(360 - this.maxAngleDegree) / 2 + 180
+  // 保持 Gauge 开角垂直向下
   public startAngleDegreeForGauge = () => 0 + 180
   // 保持 Gauge 开角垂直向下
   public endAngleDegreeForGauge = () => -0 + 180
@@ -84,7 +86,8 @@ export default class ArcViewUtil {
   //endregion
   public degreeToRadian = (degree: ANGLE_DEGREE): ANGLE_RADIAN => degree * (Math.PI / 180)
   // 度转弧度
-  // private radianToDegree = (radian: ANGLE_RADIAN): ANGLE_DEGREE => radian / (Math.PI / 180) // 弧度转度
+  private radianToDegree = (radian: ANGLE_RADIAN): ANGLE_DEGREE => radian / (Math.PI / 180)
+  // 弧度转度
   public degreeToRightTriangle = (degree: ANGLE_DEGREE, hypotenusePx: number): RightTriangle => {
     let radian = this.degreeToRadian(degree);
     let adjacentSidePx = hypotenusePx * Math.cos(radian);
@@ -215,4 +218,79 @@ export default class ArcViewUtil {
   public degreeToInnerCircleCoordinate = (degree: ANGLE_DEGREE): Coordinate => {
     return this.degreeToCoordinate(this.innerRadiusPx(), degree)
   }
+
+  //region gesture
+  private moved(x: number, y: number) {
+    let xPx = 0;
+    let yPx = 0;
+    let maxAngleDegree = this.maxAngleDegree;
+    let rightTriangle: RightTriangle | undefined;
+    let centerXpx = this.centerXPx();
+    let centerYpx = this.centerYPx();
+
+    let startAngle = this.minAngleDegree
+    let endAngle = this.maxAngleDegree;
+    let widthPx = this.widthPx();
+    let heightPx = this.heightPx();
+
+    if (!this.isEffectiveArea(x, y)) {
+      return;
+    }
+    //  y 对边   x 邻边
+    let radian = Math.atan2(y - centerYpx, x - centerXpx);
+    if (radian < 0) {
+      radian = radian + 2 * Math.PI; // 小于0的弧度值  转成 正值
+    }
+    let angle = Math.round(this.radianToDegree(radian)); // 相对于坐标系的实际角度
+
+    // 90度缺口部分  不进行计算
+    // if (circleBroken && angle <= 135 && angle >= 45) {
+    //   return;
+    // }
+
+    let mSweepAngle = this.getLastAngle(angle, startAngle);
+    // 加上起始角度的偏移角度
+    //通过角度得到xy坐标
+    // angleToXY(mSweepAngle);
+    //通过角度获取进度值
+    let mProgress = (100 * mSweepAngle / endAngle);
+    if (mProgress > 99) {
+      mProgress = 100;
+    }
+  }
+
+  private getLastAngle(angle: number, startAngel: number): number {
+    //设置起始角度的关键代码，正常情况下Math.round(Math.toDegrees(radian))就可以了。
+    let lastAngle: number;
+    if (angle < startAngel) {
+      lastAngle = 360 - startAngel + Math.abs(angle);
+    } else {
+      lastAngle = angle - startAngel;
+    }
+    return lastAngle;
+  }
+
+  /**
+   *  计算其触摸点是否在圆弧可拖动范围内
+   */
+  private isEffectiveArea(x: number, y: number) {
+    let widthPx = this.widthPx();
+    let heightPx = this.heightPx();
+    let centerXpx = this.centerXPx();
+    let centerYpx = this.centerYPx();
+    let outerRadiusPx = this.outerRadiusPx();
+
+    let result = false;
+    let distance = Math.sqrt(Math.pow(x - centerXpx, 2) + Math.pow(y - centerYpx, 2));
+    //弧线外面
+    let isCircleOuter = distance <= widthPx;
+    //弧线里面，如果想设置里面范围都可以拖动，可以 0
+    let isCircleInner = distance >= (centerXpx - outerRadiusPx - 40);
+    if (isCircleOuter && isCircleInner) {
+      result = true;
+    }
+    return result;
+  }
+
+  //endregion
 }

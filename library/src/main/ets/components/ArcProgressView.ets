@@ -8,6 +8,9 @@ import ArcViewUtil, { ANGLE_DEGREE } from './ArcViewUtil';
 @Component
 export default struct ArcProgressView {
   private TAG: string = '[ArcView](ArcProgressView)';
+  @State gaugeValue: number = 5
+  @State gaugeMin: number = 0
+  @State gaugeMax: number = 10
   @Prop
   private isDebug: boolean = true;
   @Prop
@@ -17,7 +20,7 @@ export default struct ArcProgressView {
   @Prop
   private maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
   @State
-  private curAngleDegree: ANGLE_DEGREE = 260; // 当前角度 度 [minAngleDegree, maxAngleDegree]
+  private curAngleDegree: ANGLE_DEGREE = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
   @Prop
   private widthVp: number = pp(256); // 整个画布的宽 外圆直径 vp
   @Prop
@@ -36,6 +39,19 @@ export default struct ArcProgressView {
     }
     return this._arcViewUtil;
   };
+  private _arcViewUtilForIndicator: ArcViewUtil | undefined = undefined;
+  private arcViewUtilForIndicator = (): ArcViewUtil => {
+    if (!this._arcViewUtilForIndicator) {
+      this._arcViewUtilForIndicator = new ArcViewUtil(
+        this.isDebug,
+        this.maxAngleDegree,
+        this.widthVp,
+        this.heightVp,
+        pp(32)
+      );
+    }
+    return this._arcViewUtilForIndicator;
+  };
   private onMinusButtonClicked = () => {
     let arcViewUtil = this.arcViewUtil();
     if (this.steps <= 0 || arcViewUtil.maxAngleDegree <= arcViewUtil.minAngleDegree) {
@@ -47,6 +63,10 @@ export default struct ArcProgressView {
       this.curAngleDegree = arcViewUtil.minAngleDegree;
     } else {
       this.curAngleDegree = nextDegree;
+    }
+
+    if (this.gaugeValue > this.gaugeMin) {
+      this.gaugeValue -= 1
     }
   }
   private onPlusButtonClicked = () => {
@@ -60,6 +80,10 @@ export default struct ArcProgressView {
       this.curAngleDegree = this.maxAngleDegree;
     } else {
       this.curAngleDegree = nextDegree;
+    }
+
+    if (this.gaugeValue < this.gaugeMax) {
+      this.gaugeValue += 1
     }
   }
   private minusButtonCenterCoordinate = () => {
@@ -117,6 +141,27 @@ export default struct ArcProgressView {
         widthVp: this.widthVp - pp(8 * 2),
         heightVp: this.heightVp - pp(8 * 2)
       })
+      ArcView({
+        isDebug: this.isDebug,
+        strokeWidthVp: this.arcViewUtilForIndicator().strokeWidthVp,
+        colors: [
+          ["#00000000", 0.00],
+          ["#00000000", 1.00],
+        ],
+        enableOriginAngle: true,
+        disableClip: true,
+        maxAngleDegree: this.arcViewUtilForIndicator().maxAngleDegree,
+        curAngleDegree: this.curAngleDegree,
+        widthVp: this.widthVp - pp(30 * 2),
+        heightVp: this.heightVp - pp(30 * 2),
+        gaugeIndicatorOptions: {
+          icon: $r("app.media.icon_indicator"),
+          space: 0
+        },
+        gaugeValue: this.gaugeValue,
+        gaugeMin: this.gaugeMin,
+        gaugeMax: this.gaugeMax,
+      })
       Stack({ alignContent: Alignment.Center }) {
         Image($r('app.media.button_bg'))
           .width(this.buttonSize)
@@ -131,6 +176,7 @@ export default struct ArcProgressView {
         Logger.info(this.TAG, 'minus clicked');
         this.onMinusButtonClicked();
       })
+      .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.90 })
 
       Stack({ alignContent: Alignment.Center }) {
         Image($r('app.media.button_bg'))
@@ -146,6 +192,7 @@ export default struct ArcProgressView {
         Logger.info(this.TAG, 'plus clicked');
         this.onPlusButtonClicked();
       })
+      .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.90 })
     }
     .backgroundColor(this.bgColor)
     .width(this.widthVp)
@@ -153,5 +200,44 @@ export default struct ArcProgressView {
     .onClick(() => {
       this.isDebug = !this.isDebug;
     })
+
+    /*.gesture(
+      PanGesture()
+        .onActionStart((event: GestureEvent | undefined) => {
+        })
+        .onActionUpdate((event: GestureEvent | undefined) => {
+          if (event) {
+            let widthVp: number = event.target.area.width as number;
+            let heightVp: number = event.target.area.height as number;
+            let fingerList: FingerInfo[] = event.fingerList;
+            if (!!fingerList.length) {
+              let finger = fingerList[0];
+              let x = finger.localX;
+              let y = finger.localY;
+              console.info('gesture x=' + x + ', y=' + y + ', widthVp=' + widthVp + ', heightVp=' + heightVp);
+            }
+          }
+        })
+        .onActionEnd(() => {
+        })
+    )*/
+    /*.onTouch((event) => {
+      let widthVp: number = event.target.area.width as number;
+      let heightVp: number = event.target.area.height as number;
+      let touches = event.touches;
+      let changedTouches: TouchObject[] = event.changedTouches;
+      if (!!changedTouches.length) {
+        let touchObject = changedTouches[0];
+        let x = touchObject.x;
+        let y = touchObject.x;
+        console.info('onTouch1 x=' + x + ', y=' + y + ', widthVp=' + widthVp + ', heightVp=' + heightVp);
+      }
+      if (!!touches.length) {
+        let touchObject = touches[0];
+        let x = touchObject.x;
+        let y = touchObject.x;
+        console.info('onTouch2 x=' + x + ', y=' + y + ', widthVp=' + widthVp + ', heightVp=' + heightVp);
+      }
+    })*/
   }
 }

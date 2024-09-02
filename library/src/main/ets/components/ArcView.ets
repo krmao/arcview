@@ -13,6 +13,18 @@ export default struct ArcView {
   @Watch('onIsDebugChanged')
   @Prop
   public isDebug: boolean = true;
+  @Prop
+  public enableOriginAngle: boolean = false;
+  @Prop
+  public disableClip: boolean = false;
+  @Prop
+  public gaugeIndicatorOptions: GaugeIndicatorOptions | null = null;
+  @Prop
+  public gaugeValue: number = 50
+  @Prop
+  public gaugeMin: number = 0
+  @Prop
+  public gaugeMax: number = 100
   private debugCircleColor: string = valueUtil.randomColor();
   /**
    * @Prop 不支持传递 LinearGradient, 渐变色不生效, 装饰变量时会进行深拷贝, 在拷贝的过程中除了基本类型、Map、Set、Date、Array外, 都会丢失类型
@@ -78,9 +90,10 @@ export default struct ArcView {
     return `${outerArcPath} ${innerArcPath} ${closePath}`;
   }
   @State
-  private clipPathShape: PathShape = new PathShape({ commands: this.getClipPathShapeCommands() });
+  private clipPathShape: PathShape | null = null;
   private updateClipShapePath = () => {
-    this.clipPathShape = new PathShape({ commands: this.getClipPathShapeCommands() });
+    this.clipPathShape =
+      this.disableClip ? null : new PathShape({ commands: this.getClipPathShapeCommands() });
   }
   //endregion
   private canvasRenderingContext2D: CanvasRenderingContext2D =
@@ -115,19 +128,26 @@ export default struct ArcView {
 
   build() {
     Stack({ alignContent: Alignment.Center }) {
-      Gauge({ value: 50, min: 1, max: 100 })
-        .startAngle(this.arcViewUtil().startAngleDegreeForGauge())
-        .endAngle(this.arcViewUtil().endAngleDegreeForGauge())
+      Gauge({
+        value: this.gaugeValue,
+        min: this.gaugeMin,
+        max: this.gaugeMax
+      })
+        .startAngle(this.enableOriginAngle ? this.arcViewUtil().startAngleDegreeForGaugeOrigin() :
+        this.arcViewUtil().startAngleDegreeForGauge())
+        .endAngle(this.enableOriginAngle ? this.arcViewUtil().endAngleDegreeForGaugeOrigin() :
+        this.arcViewUtil().endAngleDegreeForGauge())
         .colors(ArcColors.colorsToLinearGradient(this.colors))
         .width(this.widthVp)
         .height(this.widthVp)
         .strokeWidth(this.strokeWidthVp)
         .trackShadow({ radius: 7, offsetX: 7, offsetY: 7 })
         .description(null)
-        .indicator(null)
+        .indicator(this.gaugeIndicatorOptions)
         .clipShape(this.clipPathShape)
         .backgroundColor(Color.Transparent)
 
+      //region draw debug circle info
       Canvas(this.canvasRenderingContext2D)
         .width(this.widthVp)
         .height(this.heightVp)
@@ -137,6 +157,7 @@ export default struct ArcView {
           this.canvasRenderingContext2D.imageSmoothingQuality = 'medium'
           this.getClipPathShapeCommands();
         })
+      //endregion
     }
     .width(this.widthVp)
     .height(this.widthVp)
