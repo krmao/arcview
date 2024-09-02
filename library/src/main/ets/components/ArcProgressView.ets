@@ -13,6 +13,8 @@ export default struct ArcProgressView {
   @Prop
   private steps: number = 10;
   @Prop
+  private bgColor: string = '#BED7F2';
+  @Prop
   private maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
   @State
   private curAngleDegree: ANGLE_DEGREE = 260; // 当前角度 度 [minAngleDegree, maxAngleDegree]
@@ -145,7 +147,7 @@ export default struct ArcProgressView {
         this.onPlusButtonClicked();
       })
     }
-    .backgroundColor('#BED7F2')
+    .backgroundColor(this.bgColor)
     .width(this.widthVp)
     .height(this.widthVp)
     .onClick(() => {
