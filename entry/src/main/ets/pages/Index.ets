@@ -1,4 +1,4 @@
-import { ArcProgressView, pp } from '@codesdancing/arkview';
+import { ArcProgressView, pp } from '@codesdancing/arcview';
 
 @Entry
 @Component
@@ -8,6 +8,8 @@ struct Index {
   build() {
     Scroll() {
       Column() {
+        Text('ARCVIEW').margin(pp(32)).fontSize(40).fontWeight(700)
+
         ArcProgressView()
           .margin(pp(32))
           .alignRules({
@@ -15,11 +17,11 @@ struct Index {
             middle: { anchor: '__container__', align: HorizontalAlign.Center }
           })
       }
-      .padding({ top: pp(100) })
+      .padding({ top: pp(80) })
       .justifyContent(FlexAlign.Start)
       .alignItems(HorizontalAlign.Center)
       .width('100%')
-      .height(1500)
+      .height(1200)
     }
     .height('100%')
     .width('100%')

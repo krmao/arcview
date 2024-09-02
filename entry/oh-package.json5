@@ -6,7 +6,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "@codesdancing/arkview": "file:../library"
+    "@codesdancing/arcview": "file:../library"
   }
 }
 

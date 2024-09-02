@@ -92,8 +92,12 @@ export default struct ArcView {
   @State
   private clipPathShape: PathShape | null = null;
   private updateClipShapePath = () => {
-    this.clipPathShape =
-      this.disableClip ? null : new PathShape({ commands: this.getClipPathShapeCommands() });
+    if (this.disableClip) {
+      this.clipPathShape = null;
+      this.getClipPathShapeCommands();
+    } else {
+      this.clipPathShape = new PathShape({ commands: this.getClipPathShapeCommands() });
+    }
   }
   //endregion
   private canvasRenderingContext2D: CanvasRenderingContext2D =

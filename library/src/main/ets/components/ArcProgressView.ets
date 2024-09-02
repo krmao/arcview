@@ -144,31 +144,21 @@ export default struct ArcProgressView {
       ArcView({
         isDebug: this.isDebug,
         strokeWidthVp: this.arcViewUtilForIndicator().strokeWidthVp,
-        colors: [
-          ["#00000000", 0.00],
-          ["#00000000", 1.00],
-        ],
+        colors: [["#00000000", 0.00], ["#00000000", 1.00]],
         enableOriginAngle: true,
         disableClip: true,
         maxAngleDegree: this.arcViewUtilForIndicator().maxAngleDegree,
         curAngleDegree: this.curAngleDegree,
         widthVp: this.widthVp - pp(30 * 2),
         heightVp: this.heightVp - pp(30 * 2),
-        gaugeIndicatorOptions: {
-          icon: $r("app.media.icon_indicator"),
-          space: 0
-        },
+        gaugeIndicatorOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
         gaugeValue: this.gaugeValue,
         gaugeMin: this.gaugeMin,
         gaugeMax: this.gaugeMax,
       })
       Stack({ alignContent: Alignment.Center }) {
-        Image($r('app.media.button_bg'))
-          .width(this.buttonSize)
-          .height(this.buttonSize)
-        Image($r('app.media.icon_minus'))
-          .width(pp(20))
-          .height(pp(20))
+        Image($r('app.media.button_bg')).width(this.buttonSize).height(this.buttonSize)
+        Image($r('app.media.icon_minus')).width(pp(20)).height(pp(20))
       }.offset({
         x: px2vp(this.minusButtonCenterCoordinate().xPx) - this.widthVp / 2,
         y: px2vp(this.minusButtonCenterCoordinate().yPx) - this.heightVp / 2
@@ -179,12 +169,8 @@ export default struct ArcProgressView {
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.90 })
 
       Stack({ alignContent: Alignment.Center }) {
-        Image($r('app.media.button_bg'))
-          .width(this.buttonSize)
-          .height(this.buttonSize)
-        Image($r('app.media.icon_plus'))
-          .width(pp(20))
-          .height(pp(20))
+        Image($r('app.media.button_bg')).width(this.buttonSize).height(this.buttonSize)
+        Image($r('app.media.icon_plus')).width(pp(20)).height(pp(20))
       }.offset({
         x: px2vp(this.plusButtonCenterCoordinate().xPx) - this.widthVp / 2,
         y: px2vp(this.plusButtonCenterCoordinate().yPx) - this.heightVp / 2

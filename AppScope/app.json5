@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "com.codesdancing.arkview",
+    "bundleName": "com.codesdancing.arcview",
     "vendor": "example",
     "versionCode": 1000000,
     "versionName": "1.0.0",

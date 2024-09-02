@@ -1,6 +1,6 @@
-## arkview
+## arcview
 
-> [https://github.com/krmao/arkview](https://github.com/krmao/arkview)
+> [https://github.com/krmao/arcview](https://github.com/krmao/arcview)
 
 ### features
 
@@ -8,5 +8,4 @@
 
 ### preview
 
-- ![debug](./priview/Screenshot_0.png)
-- ![without debug](./priview/Screenshot_1.png)
+- ![preview.gif](priview%2Fpreview.gif)
