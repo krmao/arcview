@@ -1,8 +1,12 @@
 ## arkview
+
 > [https://github.com/krmao/arkview](https://github.com/krmao/arkview)
 
-### 发布
-```shell
-cd ~/workspace/arkview/library/build/default/outputs/default/
-ohpm publish ./library.har
-```
+### features
+
+- gauge with fixed gradient clip
+
+### preview
+
+- ![debug](./priview/Screenshot_0.png)
+- ![without debug](./priview/Screenshot_1.png)

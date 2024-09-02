@@ -1,9 +1,16 @@
 {
   "name": "arkview",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "gauge with gradient clip",
   "main": "Index.ets",
-  "author": "kr.mao@qq.com",
+  "keywords": [
+    "arkview",
+    "gauge",
+    "gradient"
+  ],
+  "author": {
+    "name": "kr.mao"
+  },
   "license": "Apache-2.0",
   "dependencies": {
     "@hw-agconnect/hmcore": "^1.0.2"
