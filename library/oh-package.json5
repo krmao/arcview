@@ -1,6 +1,6 @@
 {
   "name": "arcview",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "gauge with gradient clip",
   "main": "Index.ets",
   "keywords": [
