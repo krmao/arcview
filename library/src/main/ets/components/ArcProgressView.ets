@@ -19,6 +19,7 @@ export default struct ArcProgressView {
   private bgColor: string = '#BED7F2';
   @Prop
   private maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
+  private gestureEventAngleDegree: ANGLE_DEGREE | null = null;
   @State
   private curAngleDegree: ANGLE_DEGREE = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
   @Prop
@@ -186,44 +187,87 @@ export default struct ArcProgressView {
     .onClick(() => {
       this.isDebug = !this.isDebug;
     })
-
-    /*.gesture(
+    .gesture(
       PanGesture()
+        .tag("PanGesture")
         .onActionStart((event: GestureEvent | undefined) => {
+          console.info('== gesture onActionStart');
         })
         .onActionUpdate((event: GestureEvent | undefined) => {
+          console.info('== gesture onActionUpdate');
           if (event) {
-            let widthVp: number = event.target.area.width as number;
-            let heightVp: number = event.target.area.height as number;
             let fingerList: FingerInfo[] = event.fingerList;
             if (!!fingerList.length) {
               let finger = fingerList[0];
-              let x = finger.localX;
-              let y = finger.localY;
-              console.info('gesture x=' + x + ', y=' + y + ', widthVp=' + widthVp + ', heightVp=' + heightVp);
+              let xPx = vp2px(finger.localX);
+              let yPx = vp2px(finger.localY);
+
+              this.getGestureEventAngleDegreeAndUpdateCurrentDegree(xPx, yPx, false)
             }
           }
         })
         .onActionEnd(() => {
+          console.info('== gesture onActionEnd');
+          this.gestureEventAngleDegree = null;
         })
-    )*/
-    /*.onTouch((event) => {
-      let widthVp: number = event.target.area.width as number;
-      let heightVp: number = event.target.area.height as number;
-      let touches = event.touches;
-      let changedTouches: TouchObject[] = event.changedTouches;
-      if (!!changedTouches.length) {
-        let touchObject = changedTouches[0];
-        let x = touchObject.x;
-        let y = touchObject.x;
-        console.info('onTouch1 x=' + x + ', y=' + y + ', widthVp=' + widthVp + ', heightVp=' + heightVp);
+    )
+    .onGestureJudgeBegin((gestureInfo: GestureInfo, event: BaseGestureEvent) => {
+      console.info('== gesture onGestureJudgeBegin');
+      if (gestureInfo.type === GestureControl.GestureType.PAN_GESTURE && gestureInfo.tag === 'PanGesture') {
+        let fingerList: FingerInfo[] = event.fingerList;
+        if (!!fingerList.length) {
+          let finger = fingerList[0];
+          let xPx = vp2px(finger.localX);
+          let yPx = vp2px(finger.localY);
+          let gestureEventAngleDegree: ANGLE_DEGREE | null =
+            this.getGestureEventAngleDegreeAndUpdateCurrentDegree(xPx, yPx, true)
+          return gestureEventAngleDegree !== null ? GestureJudgeResult.CONTINUE : GestureJudgeResult.REJECT;
+        }
+      } else if (gestureInfo.type === GestureControl.GestureType.CLICK) {
+        return GestureJudgeResult.CONTINUE;
       }
-      if (!!touches.length) {
-        let touchObject = touches[0];
-        let x = touchObject.x;
-        let y = touchObject.x;
-        console.info('onTouch2 x=' + x + ', y=' + y + ', widthVp=' + widthVp + ', heightVp=' + heightVp);
+      return GestureJudgeResult.REJECT;
+    })
+  }
+
+  private getGestureEventAngleDegreeAndUpdateCurrentDegree(xPx: number, yPx: number,
+    outsideReturnNull: boolean): ANGLE_DEGREE | null {
+    let arcViewUtil = this.arcViewUtil();
+    let centerXpx: number = arcViewUtil.centerXPx();
+    let centerYPx: number = arcViewUtil.centerYPx();
+    let innerRadiusPx: number = arcViewUtil.innerRadiusPx();
+    let outerRadiusPx: number = arcViewUtil.outerRadiusPx();
+    let startAngle: number = arcViewUtil.minAngleDegree;
+    let endAngle: number = arcViewUtil.maxAngleDegree;
+    let offsetBetweenPositiveXAxisAndStart = arcViewUtil.offsetBetweenPositiveXAxisAndStart();
+
+    let gestureEventAngleDegree: ANGLE_DEGREE | null =
+      ArcViewUtil.getGestureEventAngleDegree(xPx, yPx, centerXpx, centerYPx, innerRadiusPx, outerRadiusPx,
+        startAngle,
+        endAngle, offsetBetweenPositiveXAxisAndStart, outsideReturnNull);
+    console.info('gesture gestureEventAngleDegree=' + this.gestureEventAngleDegree);
+    if (gestureEventAngleDegree !== null) {
+      if (this.gestureEventAngleDegree !== null) {
+        let angleOffset = gestureEventAngleDegree - this.gestureEventAngleDegree;
+        console.info('gesture angleOffset=' + angleOffset + ', gestureEventAngleDegree=' + gestureEventAngleDegree +
+          ', this.gestureEventAngleDegree=' + this.gestureEventAngleDegree + ', this.curAngleDegree=' +
+        this.curAngleDegree);
+        if (Math.abs(angleOffset) <= 20) {
+          let nextDegree = this.curAngleDegree += angleOffset;
+          if (nextDegree > arcViewUtil.maxAngleDegree) {
+            this.curAngleDegree = arcViewUtil.maxAngleDegree;
+          } else if (nextDegree < arcViewUtil.minAngleDegree) {
+            this.curAngleDegree = arcViewUtil.minAngleDegree;
+          } else {
+            this.curAngleDegree = nextDegree;
+          }
+        }
+        console.info('gesture angleOffset=' + angleOffset);
+        console.info('gesture curAngleDegree=' + this.curAngleDegree);
       }
-    })*/
+      this.gestureEventAngleDegree = gestureEventAngleDegree;
+
+    }
+    return gestureEventAngleDegree;
   }
 }

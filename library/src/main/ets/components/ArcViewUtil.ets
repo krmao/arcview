@@ -72,6 +72,8 @@ export default class ArcViewUtil {
   // maxAngleDegree >= 180 时 起点与X轴的夹角
   public offsetBetweenYAxisAndMinAngleDegree =
     () => 180 - ((360 - this.maxAngleDegree) / 2)
+  // 垂直向下的左侧起始角度 与 正 x 轴的夹角偏移量 为正数, 逆时针为正
+  public offsetBetweenPositiveXAxisAndStart = () => (360 - this.maxAngleDegree) / 2 + 90;
   // maxAngleDegree < 180 时 起点与Y轴的夹角
   //region 这两种方式都可以用, 取决于渐变颜色从哪里开始, 这里视觉稿是从 0度开始到360度结束, 然后裁剪显示, 保持高保证
   // gauge 默认 从开始绘制的地方开始渐变到结束绘制的地方结束渐变, 一共7种颜色, 删除收尾两种颜色也能接近视觉稿
@@ -86,7 +88,7 @@ export default class ArcViewUtil {
   //endregion
   public degreeToRadian = (degree: ANGLE_DEGREE): ANGLE_RADIAN => degree * (Math.PI / 180)
   // 度转弧度
-  private radianToDegree = (radian: ANGLE_RADIAN): ANGLE_DEGREE => radian / (Math.PI / 180)
+  public radianToDegree = (radian: ANGLE_RADIAN): ANGLE_DEGREE => radian / (Math.PI / 180)
   // 弧度转度
   public degreeToRightTriangle = (degree: ANGLE_DEGREE, hypotenusePx: number): RightTriangle => {
     let radian = this.degreeToRadian(degree);
@@ -219,79 +221,6 @@ export default class ArcViewUtil {
     return this.degreeToCoordinate(this.innerRadiusPx(), degree)
   }
 
-  //region gesture
-  private moved(x: number, y: number) {
-    let xPx = 0;
-    let yPx = 0;
-    let maxAngleDegree = this.maxAngleDegree;
-    let rightTriangle: RightTriangle | undefined;
-    let centerXpx = this.centerXPx();
-    let centerYpx = this.centerYPx();
-
-    let startAngle = this.minAngleDegree
-    let endAngle = this.maxAngleDegree;
-    let widthPx = this.widthPx();
-    let heightPx = this.heightPx();
-
-    if (!this.isEffectiveArea(x, y)) {
-      return;
-    }
-    //  y 对边   x 邻边
-    let radian = Math.atan2(y - centerYpx, x - centerXpx);
-    if (radian < 0) {
-      radian = radian + 2 * Math.PI; // 小于0的弧度值  转成 正值
-    }
-    let angle = Math.round(this.radianToDegree(radian)); // 相对于坐标系的实际角度
-
-    // 90度缺口部分  不进行计算
-    // if (circleBroken && angle <= 135 && angle >= 45) {
-    //   return;
-    // }
-
-    let mSweepAngle = this.getLastAngle(angle, startAngle);
-    // 加上起始角度的偏移角度
-    //通过角度得到xy坐标
-    // angleToXY(mSweepAngle);
-    //通过角度获取进度值
-    let mProgress = (100 * mSweepAngle / endAngle);
-    if (mProgress > 99) {
-      mProgress = 100;
-    }
-  }
-
-  private getLastAngle(angle: number, startAngel: number): number {
-    //设置起始角度的关键代码，正常情况下Math.round(Math.toDegrees(radian))就可以了。
-    let lastAngle: number;
-    if (angle < startAngel) {
-      lastAngle = 360 - startAngel + Math.abs(angle);
-    } else {
-      lastAngle = angle - startAngel;
-    }
-    return lastAngle;
-  }
-
-  /**
-   *  计算其触摸点是否在圆弧可拖动范围内
-   */
-  private isEffectiveArea(x: number, y: number) {
-    let widthPx = this.widthPx();
-    let heightPx = this.heightPx();
-    let centerXpx = this.centerXPx();
-    let centerYpx = this.centerYPx();
-    let outerRadiusPx = this.outerRadiusPx();
-
-    let result = false;
-    let distance = Math.sqrt(Math.pow(x - centerXpx, 2) + Math.pow(y - centerYpx, 2));
-    //弧线外面
-    let isCircleOuter = distance <= widthPx;
-    //弧线里面，如果想设置里面范围都可以拖动，可以 0
-    let isCircleInner = distance >= (centerXpx - outerRadiusPx - 40);
-    if (isCircleOuter && isCircleInner) {
-      result = true;
-    }
-    return result;
-  }
-
   /**
    * 1. 半径是否在 内外圆环半径之间
    * 2. 角度是否在范围角度之间
@@ -306,8 +235,35 @@ export default class ArcViewUtil {
    * @param endAngle
    * @returns
    */
-  public isPointInSectorRing(xPx: number, yPx: number, centerXpx: number, centerYpx: number, innerRadiusPx: number,
-    outerRadiusPx: number, startAngle: number, endAngle: number): boolean {
+  public static isGestureEventInArcView(xPx: number, yPx: number, centerXpx: number, centerYpx: number,
+    innerRadiusPx: number,
+    outerRadiusPx: number, startAngle: ANGLE_DEGREE, endAngle: ANGLE_DEGREE,
+    offsetBetweenPositiveXAxisAndStart: ANGLE_DEGREE): boolean {
+    let getGestureEventAngleDegree: ANGLE_DEGREE | null =
+      ArcViewUtil.getGestureEventAngleDegree(xPx, yPx, centerXpx, centerYpx, innerRadiusPx, outerRadiusPx, startAngle,
+        endAngle, offsetBetweenPositiveXAxisAndStart, true);
+    return getGestureEventAngleDegree != null;
+  }
+
+  /**
+   * 1. 半径是否在 内外圆环半径之间
+   * 2. 角度是否在范围角度之间
+   *
+   * @param xPx
+   * @param yPx
+   * @param centerXpx
+   * @param centerYpx
+   * @param innerRadiusPx
+   * @param outerRadiusPx
+   * @param startAngle
+   * @param endAngle
+   * @param outsideReturnNull 不再环形内部的返回 null
+   * @returns
+   */
+  public static getGestureEventAngleDegree(xPx: number, yPx: number, centerXpx: number, centerYpx: number,
+    innerRadiusPx: number,
+    outerRadiusPx: number, startAngle: ANGLE_DEGREE, endAngle: ANGLE_DEGREE,
+    offsetBetweenPositiveXAxisAndStart: ANGLE_DEGREE, outsideReturnNull: boolean): ANGLE_DEGREE | null {
     const dx = xPx - centerXpx;
     const dy = yPx - centerYpx;
 
@@ -315,23 +271,29 @@ export default class ArcViewUtil {
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     // 判断距离是否在圆环的半径范围内
-    if (distance < innerRadiusPx || distance > outerRadiusPx) {
-      return false;
+    if (outsideReturnNull && (distance < innerRadiusPx || distance > outerRadiusPx)) {
+      return null;
     }
 
     // 计算点的角度(斜边与正 x轴的夹角, 逆时针为正)，atan2 返回的是弧度, 逆时针为正, 从正 x轴 逆时针为正 360度
     let angleDegree = Math.atan2(dy, dx) * (180 / Math.PI);
-
+    angleDegree = angleDegree - offsetBetweenPositiveXAxisAndStart;
+    console.log("getGestureEventAngleDegree angleDegree1=" + angleDegree)
     // 将角度转换为 [0, 360) 的范围
     if (angleDegree < 0) {
       angleDegree += 360;
     }
+    console.log("getGestureEventAngleDegree angleDegree2=" + angleDegree)
+
+    if (!outsideReturnNull) {
+      return angleDegree
+    }
 
     // 判断角度是否在扇形的范围内
-    if (startAngle <= endAngle) {
-      return angleDegree >= startAngle && angleDegree <= endAngle;
+    if (startAngle <= endAngle && angleDegree >= startAngle && angleDegree <= endAngle) {
+      return angleDegree;
     } else {
-      return angleDegree >= startAngle || angleDegree <= endAngle;
+      return null;
     }
   }
 
