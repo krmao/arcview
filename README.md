@@ -12,7 +12,7 @@ ohpm install arcview
 
 - ArcProgressView
     ```typescript
-    import { ANGLE_DEGREE, ArcColors, ArcProgressView, pp } from '@codesdancing/arcview';
+    import { ANGLE_DEGREE, ArcColors, ArcProgressView, pp } from 'arcview';
 
     @State
     public isDebug: boolean = true;
@@ -70,7 +70,7 @@ ohpm install arcview
 
 - ArcView
     ```typescript
-    import { ArcProgressView, ArcView, pp } from '@codesdancing/arcview';
+    import { ArcProgressView, ArcView, pp } from 'arcview';
     
     ArcView({
           isDebug: this.isDebug,

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ANGLE_DEGREE, ArcColors, ArcProgressView, pp } from '@codesdancing/arcview';
+import { ANGLE_DEGREE, ArcColors, ArcProgressView, pp } from 'arcview';
 
 import { Logger } from '@hw-agconnect/hmcore';
 
