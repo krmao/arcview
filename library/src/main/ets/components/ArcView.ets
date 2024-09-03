@@ -19,12 +19,6 @@ export default struct ArcView {
   public disableClip: boolean = false;
   @Prop
   public gaugeIndicatorOptions: GaugeIndicatorOptions | null = null;
-  @Prop
-  public gaugeValue: number = 50
-  @Prop
-  public gaugeMin: number = 0
-  @Prop
-  public gaugeMax: number = 100
   private debugCircleColor: string = valueUtil.randomColor();
   /**
    * @Prop 不支持传递 LinearGradient, 渐变色不生效, 装饰变量时会进行深拷贝, 在拷贝的过程中除了基本类型、Map、Set、Date、Array外, 都会丢失类型
@@ -133,9 +127,9 @@ export default struct ArcView {
   build() {
     Stack({ alignContent: Alignment.Center }) {
       Gauge({
-        value: this.gaugeValue,
-        min: this.gaugeMin,
-        max: this.gaugeMax
+        value: this.curAngleDegree,
+        min: 0,
+        max: this.maxAngleDegree
       })
         .startAngle(this.enableOriginAngle ? this.arcViewUtil().startAngleDegreeForGaugeOrigin() :
         this.arcViewUtil().startAngleDegreeForGauge())

@@ -8,9 +8,6 @@ import ArcViewUtil, { ANGLE_DEGREE } from './ArcViewUtil';
 @Component
 export default struct ArcProgressView {
   private TAG: string = '[ArcView](ArcProgressView)';
-  @State gaugeValue: number = 5
-  @State gaugeMin: number = 0
-  @State gaugeMax: number = 10
   @Prop
   private isDebug: boolean = true;
   @Prop
@@ -22,6 +19,9 @@ export default struct ArcProgressView {
   private gestureEventAngleDegree: ANGLE_DEGREE | null = null;
   @State
   private curAngleDegree: ANGLE_DEGREE = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
+  private setCurAngleDegree = (curAngleDegree: ANGLE_DEGREE) => {
+    this.curAngleDegree = curAngleDegree;
+  }
   @Prop
   private widthVp: number = pp(256); // 整个画布的宽 外圆直径 vp
   @Prop
@@ -61,13 +61,9 @@ export default struct ArcProgressView {
     let oneStepDegree = (arcViewUtil.maxAngleDegree - arcViewUtil.minAngleDegree) / this.steps;
     let nextDegree = this.curAngleDegree - oneStepDegree;
     if (nextDegree < arcViewUtil.minAngleDegree) {
-      this.curAngleDegree = arcViewUtil.minAngleDegree;
+      this.setCurAngleDegree(arcViewUtil.minAngleDegree);
     } else {
-      this.curAngleDegree = nextDegree;
-    }
-
-    if (this.gaugeValue > this.gaugeMin) {
-      this.gaugeValue -= 1
+      this.setCurAngleDegree(nextDegree);
     }
   }
   private onPlusButtonClicked = () => {
@@ -78,13 +74,9 @@ export default struct ArcProgressView {
     let oneStepDegree = (arcViewUtil.maxAngleDegree - arcViewUtil.minAngleDegree) / this.steps;
     let nextDegree = this.curAngleDegree + oneStepDegree;
     if (nextDegree > arcViewUtil.maxAngleDegree) {
-      this.curAngleDegree = this.maxAngleDegree;
+      this.setCurAngleDegree(this.maxAngleDegree);
     } else {
-      this.curAngleDegree = nextDegree;
-    }
-
-    if (this.gaugeValue < this.gaugeMax) {
-      this.gaugeValue += 1
+      this.setCurAngleDegree(nextDegree);
     }
   }
   private minusButtonCenterCoordinate = () => {
@@ -153,9 +145,6 @@ export default struct ArcProgressView {
         widthVp: this.widthVp - pp(30 * 2),
         heightVp: this.heightVp - pp(30 * 2),
         gaugeIndicatorOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
-        gaugeValue: this.gaugeValue,
-        gaugeMin: this.gaugeMin,
-        gaugeMax: this.gaugeMax,
       })
       Stack({ alignContent: Alignment.Center }) {
         Image($r('app.media.button_bg')).width(this.buttonSize).height(this.buttonSize)
@@ -250,11 +239,11 @@ export default struct ArcProgressView {
         if (Math.abs(angleOffset) <= 20) {
           let nextDegree = this.curAngleDegree += angleOffset;
           if (nextDegree > arcViewUtil.maxAngleDegree) {
-            this.curAngleDegree = arcViewUtil.maxAngleDegree;
+            this.setCurAngleDegree(arcViewUtil.maxAngleDegree);
           } else if (nextDegree < arcViewUtil.minAngleDegree) {
-            this.curAngleDegree = arcViewUtil.minAngleDegree;
+            this.setCurAngleDegree(arcViewUtil.minAngleDegree);
           } else {
-            this.curAngleDegree = nextDegree;
+            this.setCurAngleDegree(nextDegree);
           }
         }
         Logger.info(this.TAG,
