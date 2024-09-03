@@ -48,11 +48,6 @@ ohpm install arcview
       widthVp: this.widthVp,
       heightVp: this.heightVp,
     })
-      .margin(pp(32))
-      .alignRules({
-        center: { anchor: '__container__', align: VerticalAlign.Center },
-        middle: { anchor: '__container__', align: HorizontalAlign.Center }
-      })
       .onClick(() => {
         this.isDebug = !this.isDebug;
       })
