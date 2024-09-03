@@ -101,4 +101,4 @@ ohpm install arcview
 
 ### preview
 
-- ![preview.gif](priview%2Fpreview.gif)
+- <img src="priview/preview.gif" width="320" alt="preview.gif"/>
