@@ -12,7 +12,7 @@ export default struct ArcView {
   //region prop
   @Watch('onIsDebugChanged')
   @Prop
-  public isDebug: boolean = true;
+  public isDebug: boolean = false;
   @Prop
   public enableOriginAngle: boolean = false;
   @Prop

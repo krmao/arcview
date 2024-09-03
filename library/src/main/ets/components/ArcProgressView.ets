@@ -9,24 +9,39 @@ import ArcViewUtil, { ANGLE_DEGREE } from './ArcViewUtil';
 export default struct ArcProgressView {
   private TAG: string = '[ArcView](ArcProgressView)';
   @Prop
-  private isDebug: boolean = true;
+  public isDebug: boolean = false;
   @Prop
-  private steps: number = 10;
+  public enableGesture: boolean = true;
   @Prop
-  private bgColor: string = '#BED7F2';
+  public enableButtonPlus: boolean = true;
   @Prop
-  private maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
-  private gestureEventAngleDegree: ANGLE_DEGREE | null = null;
-  @State
-  private curAngleDegree: ANGLE_DEGREE = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
-  private setCurAngleDegree = (curAngleDegree: ANGLE_DEGREE) => {
-    this.curAngleDegree = curAngleDegree;
-  }
+  public enableButtonMinus: boolean = true;
   @Prop
-  private widthVp: number = pp(256); // 整个画布的宽 外圆直径 vp
+  public buttonMinusBG: Resource = $r('app.media.button_bg');
   @Prop
-  private heightVp: number = pp(256); // 整个画布的高 外圆直径 vp
+  public buttonMinusIcon: Resource = $r('app.media.icon_minus');
+  @Prop
+  public buttonPlusBG: Resource = $r('app.media.button_bg');
+  @Prop
+  public buttonPlusIcon: Resource = $r('app.media.icon_plus');
+  @Prop
+  public enableIndicator: boolean = true;
+  @Prop
+  public steps: number = 10;
+  @Prop
+  public bgColor: string = '#BED7F2';
+  @Prop
+  public maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
+  @Watch('onCurAngleDegreeChanged')
+  @Link
+  public curAngleDegree: ANGLE_DEGREE; // = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
+  @Prop
+  public widthVp: number = pp(256); // 整个画布的宽 外圆直径 vp
+  @Prop
+  public heightVp: number = pp(256); // 整个画布的高 外圆直径 vp
+  @Prop
   public buttonSize: number = pp(34)
+  private gestureEventAngleDegree: ANGLE_DEGREE | null = null;
   private _arcViewUtil: ArcViewUtil | undefined = undefined;
   private arcViewUtil = (): ArcViewUtil => {
     if (!this._arcViewUtil) {
@@ -90,6 +105,14 @@ export default struct ArcProgressView {
       arcViewUtil.maxAngleDegree);
   }
 
+  private setCurAngleDegree(curAngleDegree: ANGLE_DEGREE) {
+    this.curAngleDegree = curAngleDegree;
+  }
+
+  public onCurAngleDegreeChanged() {
+    Logger.info(this.TAG, 'onCurAngleDegreeChanged curAngleDegree=' + this.curAngleDegree);
+  }
+
   aboutToAppear(): void {
     Logger.info(this.TAG, 'aboutToAppear');
   }
@@ -134,48 +157,50 @@ export default struct ArcProgressView {
         widthVp: this.widthVp - pp(8 * 2),
         heightVp: this.heightVp - pp(8 * 2)
       })
-      ArcView({
-        isDebug: this.isDebug,
-        strokeWidthVp: this.arcViewUtilForIndicator().strokeWidthVp,
-        colors: [["#00000000", 0.00], ["#00000000", 1.00]],
-        enableOriginAngle: true,
-        disableClip: true,
-        maxAngleDegree: this.arcViewUtilForIndicator().maxAngleDegree,
-        curAngleDegree: this.curAngleDegree,
-        widthVp: this.widthVp - pp(30 * 2),
-        heightVp: this.heightVp - pp(30 * 2),
-        gaugeIndicatorOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
-      })
-      Stack({ alignContent: Alignment.Center }) {
-        Image($r('app.media.button_bg')).width(this.buttonSize).height(this.buttonSize)
-        Image($r('app.media.icon_minus')).width(pp(20)).height(pp(20))
-      }.offset({
-        x: px2vp(this.minusButtonCenterCoordinate().xPx) - this.widthVp / 2,
-        y: px2vp(this.minusButtonCenterCoordinate().yPx) - this.heightVp / 2
-      }).onClick(() => {
-        Logger.info(this.TAG, 'minus clicked');
-        this.onMinusButtonClicked();
-      })
-      .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.90 })
-
-      Stack({ alignContent: Alignment.Center }) {
-        Image($r('app.media.button_bg')).width(this.buttonSize).height(this.buttonSize)
-        Image($r('app.media.icon_plus')).width(pp(20)).height(pp(20))
-      }.offset({
-        x: px2vp(this.plusButtonCenterCoordinate().xPx) - this.widthVp / 2,
-        y: px2vp(this.plusButtonCenterCoordinate().yPx) - this.heightVp / 2
-      }).onClick(() => {
-        Logger.info(this.TAG, 'plus clicked');
-        this.onPlusButtonClicked();
-      })
-      .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.90 })
+      if (this.enableIndicator) {
+        ArcView({
+          isDebug: this.isDebug,
+          strokeWidthVp: this.arcViewUtilForIndicator().strokeWidthVp,
+          colors: [["#00000000", 0.00], ["#00000000", 1.00]],
+          enableOriginAngle: true,
+          disableClip: true,
+          maxAngleDegree: this.arcViewUtilForIndicator().maxAngleDegree,
+          curAngleDegree: this.curAngleDegree,
+          widthVp: this.widthVp - pp(30 * 2),
+          heightVp: this.heightVp - pp(30 * 2),
+          gaugeIndicatorOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
+        })
+      }
+      if (this.enableButtonMinus) {
+        Stack({ alignContent: Alignment.Center }) {
+          Image(this.buttonMinusBG).width(this.buttonSize).height(this.buttonSize)
+          Image(this.buttonMinusIcon).width(pp(20)).height(pp(20))
+        }.offset({
+          x: px2vp(this.minusButtonCenterCoordinate().xPx) - this.widthVp / 2,
+          y: px2vp(this.minusButtonCenterCoordinate().yPx) - this.heightVp / 2
+        }).onClick(() => {
+          Logger.info(this.TAG, 'minus clicked');
+          this.onMinusButtonClicked();
+        })
+        .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.90 })
+      }
+      if (this.enableButtonPlus) {
+        Stack({ alignContent: Alignment.Center }) {
+          Image(this.buttonPlusBG).width(this.buttonSize).height(this.buttonSize)
+          Image(this.buttonPlusIcon).width(pp(20)).height(pp(20))
+        }.offset({
+          x: px2vp(this.plusButtonCenterCoordinate().xPx) - this.widthVp / 2,
+          y: px2vp(this.plusButtonCenterCoordinate().yPx) - this.heightVp / 2
+        }).onClick(() => {
+          Logger.info(this.TAG, 'plus clicked');
+          this.onPlusButtonClicked();
+        })
+        .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.90 })
+      }
     }
     .backgroundColor(this.bgColor)
     .width(this.widthVp)
     .height(this.widthVp)
-    .onClick(() => {
-      this.isDebug = !this.isDebug;
-    })
     .gesture(
       PanGesture()
         .tag("PanGesture")
@@ -201,6 +226,9 @@ export default struct ArcProgressView {
     )
     .onGestureJudgeBegin((gestureInfo: GestureInfo, event: BaseGestureEvent) => {
       Logger.info(this.TAG, 'onGestureJudgeBegin');
+      if (!this.enableGesture) {
+        return GestureJudgeResult.REJECT;
+      }
       if (gestureInfo.type === GestureControl.GestureType.PAN_GESTURE && gestureInfo.tag === 'PanGesture') {
         let fingerList: FingerInfo[] = event.fingerList;
         if (!!fingerList.length) {
