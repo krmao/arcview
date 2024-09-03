@@ -57,16 +57,6 @@ ohpm install arcview
         this.isDebug = !this.isDebug;
       })
     ```
-    - options
-      ```typescript
-        private isDebug: boolean = true;
-        private steps: number = 10;
-        private bgColor: string = '#BED7F2';
-        private maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
-        private curAngleDegree: ANGLE_DEGREE = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
-        private widthVp: number = pp(256); // 整个画布的宽 外圆直径 vp
-        private heightVp: number = pp(256); // 整个画布的高 外圆直径 vp
-      ```
 
 - ArcView
     ```typescript
