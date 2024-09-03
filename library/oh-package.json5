@@ -7,6 +7,9 @@
   "repository": "https://github.com/krmao/arcview",
   "keywords": [
     "arcview",
+    "clip",
+    "progress",
+    "gesture",
     "gauge",
     "gradient"
   ],

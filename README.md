@@ -88,6 +88,11 @@ ohpm install arcview
 
 ### features
 
+- support always vertical
+- support custom max angle degree
+- support custom buttons
+- support debug log and views
+- support gesture progress in scrollView with no conflict
 - support ArcView just show
 - support ArcProgressView with gesture progress
 - support arc gradient colors clip
