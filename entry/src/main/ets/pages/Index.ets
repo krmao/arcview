@@ -1,4 +1,4 @@
-import { ANGLE_DEGREE, ArcProgressView, pp } from '@codesdancing/arcview';
+import { ANGLE_DEGREE, ArcColors, ArcProgressView, pp } from '@codesdancing/arcview';
 import { Logger } from '@hw-agconnect/hmcore';
 
 @Entry
@@ -8,21 +8,22 @@ struct Index {
   @State message: string = 'Hello World';
   @State
   public isDebug: boolean = true;
-  @State
+  public enableGesture: boolean = true;
   public enableIndicator: boolean = true;
-  @State
   public steps: number = 10;
-  @State
   public bgColor: string = '#BED7F2';
-  @State
   public maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
   @Watch('onCurAngleDegreeChanged')
   @State
   public curAngleDegree: ANGLE_DEGREE = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
-  @State
   public widthVp: number = pp(256); // 整个画布的宽 外圆直径 vp
-  @State
   public heightVp: number = pp(256); // 整个画布的高 外圆直径 vp
+  public bgColors: Array<[string, number]> = [
+    ["#80FFFFFF", 0.00],
+    ["#80FFFFFF", 1.00],
+  ]
+  public arcOuterColors: Array<[string, number]> = ArcColors.arcOuterColors;
+  public arcInnerColors: Array<[string, number]> = ArcColors.arcInnerColors;
 
   public onCurAngleDegreeChanged() {
     Logger.info(this.TAG, 'onCurAngleDegreeChanged curAngleDegree=' + this.curAngleDegree);
@@ -35,6 +36,7 @@ struct Index {
 
         ArcProgressView({
           isDebug: this.isDebug,
+          enableGesture: this.enableGesture,
           enableIndicator: this.enableIndicator,
           steps: this.steps,
           bgColor: this.bgColor,

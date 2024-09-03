@@ -12,9 +12,50 @@ ohpm install arcview
 
 - ArcProgressView
     ```typescript
-    import { ArcProgressView, pp } from '@codesdancing/arcview';
-    
-    ArcProgressView()
+    import { ANGLE_DEGREE, ArcColors, ArcProgressView, pp } from '@codesdancing/arcview';
+
+    @State
+    public isDebug: boolean = true;
+    public enableGesture: boolean = true;
+    public enableIndicator: boolean = true;
+    public steps: number = 10;
+    public bgColor: string = '#BED7F2';
+    public maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
+    @Watch('onCurAngleDegreeChanged')
+    @State
+    public curAngleDegree: ANGLE_DEGREE = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
+    public widthVp: number = pp(256); // 整个画布的宽 外圆直径 vp
+    public heightVp: number = pp(256); // 整个画布的高 外圆直径 vp
+    public bgColors: Array<[string, number]> = [
+      ["#80FFFFFF", 0.00],
+      ["#80FFFFFF", 1.00],
+    ]
+    public arcOuterColors: Array<[string, number]> = ArcColors.arcOuterColors;
+    public arcInnerColors: Array<[string, number]> = ArcColors.arcInnerColors;
+  
+    public onCurAngleDegreeChanged() {
+      Logger.info(this.TAG, 'onCurAngleDegreeChanged curAngleDegree=' + this.curAngleDegree);
+    }
+  
+    ArcProgressView({
+      isDebug: this.isDebug,
+      enableGesture: this.enableGesture,
+      enableIndicator: this.enableIndicator,
+      steps: this.steps,
+      bgColor: this.bgColor,
+      maxAngleDegree: this.maxAngleDegree,
+      curAngleDegree: this.curAngleDegree,
+      widthVp: this.widthVp,
+      heightVp: this.heightVp,
+    })
+      .margin(pp(32))
+      .alignRules({
+        center: { anchor: '__container__', align: VerticalAlign.Center },
+        middle: { anchor: '__container__', align: HorizontalAlign.Center }
+      })
+      .onClick(() => {
+        this.isDebug = !this.isDebug;
+      })
     ```
     - options
       ```typescript
@@ -32,26 +73,27 @@ ohpm install arcview
     import { ArcProgressView, ArcView, pp } from '@codesdancing/arcview';
     
     ArcView({
-        isDebug: this.isDebug,
-        strokeWidthVp: this.arcViewUtilForIndicator().strokeWidthVp,
-        colors: [["#00000000", 0.00], ["#00000000", 1.00]],
-        enableOriginAngle: true,
-        disableClip: true,
-        maxAngleDegree: this.arcViewUtilForIndicator().maxAngleDegree,
-        curAngleDegree: this.curAngleDegree,
-        widthVp: this.widthVp - pp(30 * 2),
-        heightVp: this.heightVp - pp(30 * 2),
-        gaugeIndicatorOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
-        gaugeValue: this.gaugeValue,
-        gaugeMin: this.gaugeMin,
-        gaugeMax: this.gaugeMax,
+          isDebug: this.isDebug,
+          strokeWidthVp: this.arcViewUtilForIndicator().strokeWidthVp,
+          colors: [["#00000000", 0.00], ["#00000000", 1.00]],
+          enableOriginAngle: true,
+          disableClip: true,
+          maxAngleDegree: this.arcViewUtilForIndicator().maxAngleDegree,
+          curAngleDegree: this.curAngleDegree,
+          widthVp: this.widthVp - pp(30 * 2),
+          heightVp: this.heightVp - pp(30 * 2),
+          gaugeIndicatorOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
       })
     ```
 
 ### features
 
-- gauge with fixed gradient clip
+- support ArcView just show
+- support ArcProgressView with gesture progress
+- support arc gradient colors clip
+- support gesture
+- support indicator
 
 ### preview
 
-- ![preview.gif](library%2Fpriview%2Fpreview.gif)
+- ![preview.gif](priview%2Fpreview.gif)

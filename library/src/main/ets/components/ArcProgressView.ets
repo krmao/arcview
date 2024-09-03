@@ -27,6 +27,15 @@ export default struct ArcProgressView {
   @Prop
   public enableIndicator: boolean = true;
   @Prop
+  public bgColors: Array<[string, number]> = [
+    ["#80FFFFFF", 0.00],
+    ["#80FFFFFF", 1.00],
+  ]
+  @Prop
+  public arcOuterColors: Array<[string, number]> = ArcColors.arcOuterColors;
+  @Prop
+  public arcInnerColors: Array<[string, number]> = ArcColors.arcInnerColors;
+  @Prop
   public steps: number = 10;
   @Prop
   public bgColor: string = '#BED7F2';
@@ -130,10 +139,7 @@ export default struct ArcProgressView {
       ArcView({
         isDebug: this.isDebug,
         strokeWidthVp: pp(30 + 1 + 0.5),
-        colors: [
-          ["#80FFFFFF", 0.00],
-          ["#80FFFFFF", 1.00],
-        ],
+        colors: this.bgColors,
         maxAngleDegree: this.maxAngleDegree,
         curAngleDegree: this.maxAngleDegree,
         widthVp: this.widthVp + pp(1),
@@ -142,7 +148,7 @@ export default struct ArcProgressView {
       ArcView({
         isDebug: this.isDebug,
         strokeWidthVp: pp(8),
-        colors: ArcColors.arcOuterColors,
+        colors: this.arcOuterColors,
         maxAngleDegree: this.maxAngleDegree,
         curAngleDegree: this.curAngleDegree,
         widthVp: this.widthVp,
@@ -151,7 +157,7 @@ export default struct ArcProgressView {
       ArcView({
         isDebug: this.isDebug,
         strokeWidthVp: pp(30 - 8),
-        colors: ArcColors.arcInnerColors,
+        colors: this.arcInnerColors,
         maxAngleDegree: this.maxAngleDegree,
         curAngleDegree: this.curAngleDegree,
         widthVp: this.widthVp - pp(8 * 2),
