@@ -190,29 +190,28 @@ export default struct ArcProgressView {
     .gesture(
       PanGesture()
         .tag("PanGesture")
-        .onActionStart((event: GestureEvent | undefined) => {
-          console.info('== gesture onActionStart');
+        .onActionStart((_event: GestureEvent | undefined) => {
+          Logger.info(this.TAG, 'onActionStart');
         })
         .onActionUpdate((event: GestureEvent | undefined) => {
-          console.info('== gesture onActionUpdate');
           if (event) {
             let fingerList: FingerInfo[] = event.fingerList;
             if (!!fingerList.length) {
               let finger = fingerList[0];
               let xPx = vp2px(finger.localX);
               let yPx = vp2px(finger.localY);
-
+              Logger.info(this.TAG, 'onActionUpdate xPx=' + xPx + ', yPx=' + yPx);
               this.getGestureEventAngleDegreeAndUpdateCurrentDegree(xPx, yPx, false)
             }
           }
         })
         .onActionEnd(() => {
-          console.info('== gesture onActionEnd');
+          Logger.info(this.TAG, 'onActionEnd');
           this.gestureEventAngleDegree = null;
         })
     )
     .onGestureJudgeBegin((gestureInfo: GestureInfo, event: BaseGestureEvent) => {
-      console.info('== gesture onGestureJudgeBegin');
+      Logger.info(this.TAG, 'onGestureJudgeBegin');
       if (gestureInfo.type === GestureControl.GestureType.PAN_GESTURE && gestureInfo.tag === 'PanGesture') {
         let fingerList: FingerInfo[] = event.fingerList;
         if (!!fingerList.length) {
@@ -245,13 +244,9 @@ export default struct ArcProgressView {
       ArcViewUtil.getGestureEventAngleDegree(xPx, yPx, centerXpx, centerYPx, innerRadiusPx, outerRadiusPx,
         startAngle,
         endAngle, offsetBetweenPositiveXAxisAndStart, outsideReturnNull);
-    console.info('gesture gestureEventAngleDegree=' + this.gestureEventAngleDegree);
     if (gestureEventAngleDegree !== null) {
       if (this.gestureEventAngleDegree !== null) {
         let angleOffset = gestureEventAngleDegree - this.gestureEventAngleDegree;
-        console.info('gesture angleOffset=' + angleOffset + ', gestureEventAngleDegree=' + gestureEventAngleDegree +
-          ', this.gestureEventAngleDegree=' + this.gestureEventAngleDegree + ', this.curAngleDegree=' +
-        this.curAngleDegree);
         if (Math.abs(angleOffset) <= 20) {
           let nextDegree = this.curAngleDegree += angleOffset;
           if (nextDegree > arcViewUtil.maxAngleDegree) {
@@ -262,11 +257,11 @@ export default struct ArcProgressView {
             this.curAngleDegree = nextDegree;
           }
         }
-        console.info('gesture angleOffset=' + angleOffset);
-        console.info('gesture curAngleDegree=' + this.curAngleDegree);
+        Logger.info(this.TAG,
+          'getGestureEventAngleDegreeAndUpdateCurrentDegree angleOffset=' + angleOffset + ', curAngleDegree=' +
+          this.curAngleDegree);
       }
       this.gestureEventAngleDegree = gestureEventAngleDegree;
-
     }
     return gestureEventAngleDegree;
   }

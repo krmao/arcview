@@ -266,29 +266,22 @@ export default class ArcViewUtil {
     offsetBetweenPositiveXAxisAndStart: ANGLE_DEGREE, outsideReturnNull: boolean): ANGLE_DEGREE | null {
     const dx = xPx - centerXpx;
     const dy = yPx - centerYpx;
-
     // 计算点到圆心的距离
     const distance = Math.sqrt(dx * dx + dy * dy);
-
     // 判断距离是否在圆环的半径范围内
     if (outsideReturnNull && (distance < innerRadiusPx || distance > outerRadiusPx)) {
       return null;
     }
-
     // 计算点的角度(斜边与正 x轴的夹角, 逆时针为正)，atan2 返回的是弧度, 逆时针为正, 从正 x轴 逆时针为正 360度
     let angleDegree = Math.atan2(dy, dx) * (180 / Math.PI);
     angleDegree = angleDegree - offsetBetweenPositiveXAxisAndStart;
-    console.log("getGestureEventAngleDegree angleDegree1=" + angleDegree)
     // 将角度转换为 [0, 360) 的范围
     if (angleDegree < 0) {
       angleDegree += 360;
     }
-    console.log("getGestureEventAngleDegree angleDegree2=" + angleDegree)
-
     if (!outsideReturnNull) {
       return angleDegree
     }
-
     // 判断角度是否在扇形的范围内
     if (startAngle <= endAngle && angleDegree >= startAngle && angleDegree <= endAngle) {
       return angleDegree;
