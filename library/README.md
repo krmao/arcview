@@ -81,7 +81,6 @@ ohpm install arcview
 - support ArcView just show
 - support ArcProgressView with gesture progress
 - support arc gradient colors clip
-- support gesture
 - support indicator
 
 ### [preview](..%2FREADME.md)
