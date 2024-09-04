@@ -83,4 +83,4 @@ ohpm install arcview
 - support arc gradient colors clip
 - support indicator
 
-### [preview](..%2FREADME.md)
+### [preview](https://github.com/krmao/arcview?tab=readme-ov-file#preview)
