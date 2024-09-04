@@ -1,5 +1,9 @@
 ## 0.0.7
 
+1. just update readme about preview
+
+## 0.0.7
+
 1. support apache 2.0 license in code file head comment
 
 ## 0.0.6
