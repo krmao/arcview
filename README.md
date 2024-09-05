@@ -1,6 +1,7 @@
 ## arcview
 
-> [https://github.com/krmao/arcview](https://github.com/krmao/arcview)
+- [Github 仓库地址](https://github.com/krmao/arcview)
+- [OpenHarmony 三方库中心仓地址](https://ohpm.openharmony.cn/#/cn/detail/arcview)
 
 ### preview
 
