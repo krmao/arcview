@@ -18,7 +18,7 @@ import { ANGLE_DEGREE, ArcColors, ArcProgressView, getDisplayWidth, pp, setCusto
 import { Logger } from '@hw-agconnect/hmcore';
 
 // optional: custom pp
-setCustomPP((px: number, designWidthPx: number = 375): number => {
+setCustomPP((px: number, designWidthPx: number): number => {
   let displayWidth: number | undefined = getDisplayWidth();
   return !displayWidth ? px : px2vp(px / (designWidthPx / displayWidth));
 });

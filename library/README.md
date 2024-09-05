@@ -75,7 +75,7 @@ ohpm install arcview
     ```typescript
     import { ANGLE_DEGREE, ArcColors, ArcProgressView, getDisplayWidth, pp, setCustomPP } from 'arcview';
     
-    setCustomPP((px: number, designWidthPx: number = 375): number => {
+    setCustomPP((px: number, designWidthPx: number): number => {
       let displayWidth: number | undefined = getDisplayWidth();
       return !displayWidth ? px : px2vp(px / (designWidthPx / displayWidth));
     });
