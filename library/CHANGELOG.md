@@ -1,3 +1,7 @@
+## 0.0.10
+
+1. update readme
+
 ## 0.0.9
 
 1. support custom pp
