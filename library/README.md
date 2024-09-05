@@ -2,6 +2,8 @@
 
 > [https://github.com/krmao/arcview](https://github.com/krmao/arcview)
 
+### [preview](https://github.com/krmao/arcview?tab=readme-ov-file#preview)
+
 ### install
 
 ```shell
@@ -70,7 +72,7 @@ ohpm install arcview
           gaugeIndicatorOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
       })
     ```
-  
+
 - optional custom pp
     ```typescript
     import { ANGLE_DEGREE, ArcColors, ArcProgressView, getDisplayWidth, pp, setCustomPP } from 'arcview';
@@ -93,5 +95,3 @@ ohpm install arcview
 - support arc gradient colors clip
 - support indicator
 - support custom pp
-
-### [preview](https://github.com/krmao/arcview?tab=readme-ov-file#preview)

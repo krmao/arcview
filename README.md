@@ -2,6 +2,10 @@
 
 > [https://github.com/krmao/arcview](https://github.com/krmao/arcview)
 
+### preview
+
+- <img src="priview/preview.gif" width="320" alt="preview.gif"/>
+
 ### install
 
 ```shell
@@ -94,7 +98,3 @@ ohpm install arcview
 - support arc gradient colors clip
 - support indicator
 - support custom pp
-
-### preview
-
-- <img src="priview/preview.gif" width="320" alt="preview.gif"/>
