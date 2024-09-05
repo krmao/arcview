@@ -52,7 +52,7 @@ ohpm install arcview
         this.isDebug = !this.isDebug;
       })
     ```
-  
+
 - ArcView
     ```typescript
     import { ArcProgressView, ArcView, pp } from 'arcview';
@@ -71,6 +71,17 @@ ohpm install arcview
       })
     ```
 
+- optional custom pp
+    ```typescript
+    import { ANGLE_DEGREE, ArcColors, ArcProgressView, getDisplayWidth, pp, setCustomPP } from 'arcview';
+    
+    // optional: custom pp
+    setCustomPP((px: number, designWidthPx: number = 375): number => {
+      let displayWidth: number | undefined = getDisplayWidth();
+      return !displayWidth ? px : px2vp(px / (designWidthPx / displayWidth));
+    });
+  ```
+
 ### features
 
 - support always vertical
@@ -82,6 +93,7 @@ ohpm install arcview
 - support ArcProgressView with gesture progress
 - support arc gradient colors clip
 - support indicator
+- support custom pp
 
 ### preview
 

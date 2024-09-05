@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ANGLE_DEGREE, ArcColors, ArcProgressView, pp } from 'arcview';
+import { ANGLE_DEGREE, ArcColors, ArcProgressView, getDisplayWidth, pp, setCustomPP } from 'arcview';
 
 import { Logger } from '@hw-agconnect/hmcore';
+
+// optional: custom pp
+setCustomPP((px: number, designWidthPx: number = 375): number => {
+  let displayWidth: number | undefined = getDisplayWidth();
+  return !displayWidth ? px : px2vp(px / (designWidthPx / displayWidth));
+});
 
 @Entry
 @Component

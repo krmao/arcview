@@ -57,6 +57,16 @@ export const screenHeightVp = (): number => {
   return px2vp(screenHeight());
 }
 
+export type CustomPPFunction = (px: number, designWidthPx: number) => number;
+
+let __customPP: CustomPPFunction | undefined = undefined;
+
+/**
+ * 自定义 pp
+ */
+export const setCustomPP = (customPP: CustomPPFunction | undefined) => {
+  __customPP = customPP;
+}
 
 /**
  * pxToVp == pp
@@ -65,47 +75,9 @@ export const screenHeightVp = (): number => {
  * @param designWidthPx 视觉稿屏幕宽度 px, 默认 375px
  */
 export const pp = (px: number, designWidthPx: number = 375): number => {
+  if (!!__customPP) {
+    return __customPP(px, designWidthPx)
+  }
   let displayWidth: number | undefined = getDisplayWidth();
   return !displayWidth ? px : px2vp(px / (designWidthPx / displayWidth));
-}
-
-export const statusBarHeightVp = (): number => {
-  return AppStorage.get<number>('statusBarHeight') || 0;
-}
-
-export const naviBarHeightVp = (): number => {
-  return AppStorage.get<number>('naviIndicatorHeight') || 0;
-}
-
-/**
- * 多个相同名称的页面情况下, 取栈顶参数
- * @param navPathStack
- * @param name
- * @returns
- */
-export function getTopStackParam<T>(navPathStack: NavPathStack | undefined,
-  name: string | undefined): T | undefined {
-  if (!navPathStack || !name?.length) {
-    return undefined;
-  }
-  let params: Array<T> | undefined = navPathStack.getParamByName(name) as Array<T>;
-  return !!params?.length ? params[params.length-1] : undefined
-}
-
-/**
- * NavDestination#onReady
- * @param navDestinationContext
- * @returns
- */
-export function getStackOnNavDestinationReady(navDestinationContext: NavDestinationContext): NavPathStack | undefined {
-  return navDestinationContext.pathStack
-}
-
-/**
- * NavDestination#onReady
- * @param navDestinationContext
- * @returns
- */
-export function getParamOnNavDestinationReady<T>(navDestinationContext: NavDestinationContext): T | undefined {
-  return navDestinationContext.pathInfo.param as T
 }

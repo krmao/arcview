@@ -70,6 +70,16 @@ ohpm install arcview
           gaugeIndicatorOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
       })
     ```
+  
+- optional custom pp
+    ```typescript
+    import { ANGLE_DEGREE, ArcColors, ArcProgressView, getDisplayWidth, pp, setCustomPP } from 'arcview';
+    
+    setCustomPP((px: number, designWidthPx: number = 375): number => {
+      let displayWidth: number | undefined = getDisplayWidth();
+      return !displayWidth ? px : px2vp(px / (designWidthPx / displayWidth));
+    });
+  ```
 
 ### features
 
@@ -82,5 +92,6 @@ ohpm install arcview
 - support ArcProgressView with gesture progress
 - support arc gradient colors clip
 - support indicator
+- support custom pp
 
 ### [preview](https://github.com/krmao/arcview?tab=readme-ov-file#preview)
