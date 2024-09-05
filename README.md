@@ -6,6 +6,19 @@
 
 - <img src="priview/preview.gif" width="320" alt="preview.gif"/>
 
+### features
+
+- support always vertical
+- support custom max angle degree
+- support custom buttons
+- support debug log and views
+- support gesture progress in scrollView with no conflict
+- support ArcView just show
+- support ArcProgressView with gesture progress
+- support arc gradient colors clip
+- support indicator
+- support custom pp
+
 ### install
 
 ```shell
@@ -85,16 +98,3 @@ ohpm install arcview
       return !displayWidth ? px : px2vp(px / (designWidthPx / displayWidth));
     });
   ```
-
-### features
-
-- support always vertical
-- support custom max angle degree
-- support custom buttons
-- support debug log and views
-- support gesture progress in scrollView with no conflict
-- support ArcView just show
-- support ArcProgressView with gesture progress
-- support arc gradient colors clip
-- support indicator
-- support custom pp
