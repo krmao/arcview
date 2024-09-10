@@ -22,6 +22,7 @@
 - support onAngleDegreeChanged params is round
 - support onTouchChanged isTouching
 - support curAngleDegree round
+- support onButtonClicked
 
 ### install
 
@@ -68,6 +69,11 @@ ohpm install arcview
       curAngleDegree: this.curAngleDegree,
       widthVp: this.widthVp,
       heightVp: this.heightVp,
+      onButtonClicked: (isMinusButtonClicked: boolean, angleDegree: ANGLE_DEGREE) => {
+        Logger.info(this.TAG,
+          'ArcProgressView onButtonClicked isMinusButtonClicked=' + isMinusButtonClicked + ', angleDegree=' +
+            angleDegree);
+      },
       onAngleDegreeChanged: (angleDegree: ANGLE_DEGREE) => {
         Logger.info(this.TAG, 'ArcProgressView onAngleDegreeChanged angleDegree=' + angleDegree);
       },

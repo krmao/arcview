@@ -41,6 +41,7 @@ export default struct ArcProgressView {
   public buttonPlusIcon: Resource = $r('app.media.icon_plus');
   @Prop
   public enableIndicator: boolean = true;
+  public onButtonClicked: ((isMinusButtonClicked: boolean, angleDegree: ANGLE_DEGREE) => void) | undefined;
   public onTouchChanged: ((isTouching: boolean, event: GestureEvent) => void) | undefined;
   /**
    * angleDegree 四舍五入取整
@@ -112,6 +113,7 @@ export default struct ArcProgressView {
     } else {
       this.setCurAngleDegree(nextDegree);
     }
+    this.onButtonClicked?.(true, this.curAngleDegree);
   }
   private onPlusButtonClicked = () => {
     let arcViewUtil = this.arcViewUtil();
@@ -125,6 +127,7 @@ export default struct ArcProgressView {
     } else {
       this.setCurAngleDegree(nextDegree);
     }
+    this.onButtonClicked?.(false, this.curAngleDegree);
   }
   private minusButtonCenterCoordinate = () => {
     let arcViewUtil = this.arcViewUtil();

@@ -66,6 +66,11 @@ struct Index {
           curAngleDegree: this.curAngleDegree,
           widthVp: this.widthVp,
           heightVp: this.heightVp,
+          onButtonClicked: (isMinusButtonClicked: boolean, angleDegree: ANGLE_DEGREE) => {
+            Logger.info(this.TAG,
+              'ArcProgressView onButtonClicked isMinusButtonClicked=' + isMinusButtonClicked + ', angleDegree=' +
+                angleDegree);
+          },
           onAngleDegreeChanged: (angleDegree: ANGLE_DEGREE) => {
             Logger.info(this.TAG, 'ArcProgressView onAngleDegreeChanged angleDegree=' + angleDegree);
           },
