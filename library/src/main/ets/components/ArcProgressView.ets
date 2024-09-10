@@ -41,6 +41,11 @@ export default struct ArcProgressView {
   public buttonPlusIcon: Resource = $r('app.media.icon_plus');
   @Prop
   public enableIndicator: boolean = true;
+  public onTouchChanged: ((isTouching: boolean, event: GestureEvent) => void) | undefined;
+  /**
+   * angleDegree 四舍五入取整
+   */
+  public onAngleDegreeChanged: ((angleDegree: ANGLE_DEGREE) => void) | undefined;
   @Prop
   public bgColors: Array<[string, number]> = [
     ["#80FFFFFF", 0.00],
@@ -57,6 +62,9 @@ export default struct ArcProgressView {
   @Prop
   public maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
   @Watch('onCurAngleDegreeChanged')
+  /**
+   * 四舍五入取整
+   */
   @Link
   public curAngleDegree: ANGLE_DEGREE; // = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
   @Prop
@@ -130,7 +138,13 @@ export default struct ArcProgressView {
   }
 
   private setCurAngleDegree(curAngleDegree: ANGLE_DEGREE) {
-    this.curAngleDegree = curAngleDegree;
+    //region 四舍五入取整
+    let angleDegree = Math.round(curAngleDegree);
+    angleDegree = Math.min(angleDegree, this.maxAngleDegree);
+    angleDegree = Math.max(angleDegree, 0);
+    //endregion
+    this.curAngleDegree = angleDegree;
+    this.onAngleDegreeChanged?.(angleDegree)
   }
 
   public onCurAngleDegreeChanged() {
@@ -225,10 +239,12 @@ export default struct ArcProgressView {
     .gesture(
       PanGesture()
         .tag("PanGesture")
-        .onActionStart((_event: GestureEvent | undefined) => {
+        .onActionStart((event: GestureEvent) => {
           Logger.info(this.TAG, 'onActionStart');
+          this.onTouchChanged?.(true, event)
         })
-        .onActionUpdate((event: GestureEvent | undefined) => {
+        .onActionUpdate((event: GestureEvent) => {
+          this.onTouchChanged?.(true, event)
           if (event) {
             let fingerList: FingerInfo[] = event.fingerList;
             if (!!fingerList.length) {
@@ -240,7 +256,8 @@ export default struct ArcProgressView {
             }
           }
         })
-        .onActionEnd(() => {
+        .onActionEnd((event: GestureEvent) => {
+          this.onTouchChanged?.(false, event)
           Logger.info(this.TAG, 'onActionEnd');
           this.gestureEventAngleDegree = null;
         })

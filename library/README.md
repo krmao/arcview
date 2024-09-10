@@ -17,6 +17,9 @@
 - support arc gradient colors clip
 - support indicator
 - support custom pp
+- support onAngleDegreeChanged params is round
+- support onTouchChanged isTouching
+- support curAngleDegree round
 
 ### install
 
@@ -63,6 +66,14 @@ ohpm install arcview
       curAngleDegree: this.curAngleDegree,
       widthVp: this.widthVp,
       heightVp: this.heightVp,
+      onAngleDegreeChanged: (angleDegree: ANGLE_DEGREE) => {
+        Logger.info(this.TAG, 'ArcProgressView onAngleDegreeChanged angleDegree=' + angleDegree);
+      },
+      onTouchChanged: (isTouching: boolean, event: GestureEvent) => {
+        Logger.info(this.TAG,
+          'ArcProgressView onTouchChanged isTouching=' + isTouching + ', event=(' + event.fingerList[0]?.localX +
+            ',' + event.fingerList[0]?.localY + ')');
+      }
     })
       .onClick(() => {
         this.isDebug = !this.isDebug;

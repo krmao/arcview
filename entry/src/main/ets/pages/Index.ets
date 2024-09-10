@@ -66,6 +66,14 @@ struct Index {
           curAngleDegree: this.curAngleDegree,
           widthVp: this.widthVp,
           heightVp: this.heightVp,
+          onAngleDegreeChanged: (angleDegree: ANGLE_DEGREE) => {
+            Logger.info(this.TAG, 'ArcProgressView onAngleDegreeChanged angleDegree=' + angleDegree);
+          },
+          onTouchChanged: (isTouching: boolean, event: GestureEvent) => {
+            Logger.info(this.TAG,
+              'ArcProgressView onTouchChanged isTouching=' + isTouching + ', event=(' + event.fingerList[0]?.localX +
+                ',' + event.fingerList[0]?.localY + ')');
+          }
         })
           .margin(pp(32))
           .alignRules({

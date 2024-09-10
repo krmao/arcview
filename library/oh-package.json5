@@ -1,6 +1,6 @@
 {
   "name": "arcview",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "gauge with gradient clip",
   "main": "Index.ets",
   "homepage": "https://github.com/krmao/arcview",

@@ -1,3 +1,9 @@
+## 0.0.11
+
+1. support onAngleDegreeChanged params is round
+2. support onTouchChanged isTouching
+3. support curAngleDegree round
+
 ## 0.0.10
 
 1. update readme
