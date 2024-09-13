@@ -1,18 +1,3 @@
-/**
- * Copyright (c) 2024 kr.mao Authors. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import { ANGLE_DEGREE, ArcColors, ArcProgressView, getDisplayWidth, pp, setCustomPP } from 'arcview';
 
 import { Logger } from '@hw-agconnect/hmcore';
@@ -27,25 +12,13 @@ setCustomPP((px: number, designWidthPx: number): number => {
 @Component
 struct Index {
   private TAG: string = '[ArcView](Index)';
-  @State message: string = 'Hello World';
   @State
   public isDebug: boolean = true;
-  public enableGesture: boolean = true;
-  public enableIndicator: boolean = true;
-  public steps: number = 10;
-  public bgColor: string = '#BED7F2';
-  public maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
+  public steps: number = 15;
+  public maxAngleDegree: ANGLE_DEGREE = 220;
   @Watch('onCurAngleDegreeChanged')
   @State
-  public curAngleDegree: ANGLE_DEGREE = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
-  public widthVp: number = pp(256); // 整个画布的宽 外圆直径 vp
-  public heightVp: number = pp(256); // 整个画布的高 外圆直径 vp
-  public bgColors: Array<[string, number]> = [
-    ["#80FFFFFF", 0.00],
-    ["#80FFFFFF", 1.00],
-  ]
-  public arcOuterColors: Array<[string, number]> = ArcColors.arcOuterColors;
-  public arcInnerColors: Array<[string, number]> = ArcColors.arcInnerColors;
+  public curAngleDegree: ANGLE_DEGREE = this.maxAngleDegree / this.steps * 5;
 
   public onCurAngleDegreeChanged() {
     Logger.info(this.TAG, 'onCurAngleDegreeChanged curAngleDegree=' + this.curAngleDegree);
@@ -54,30 +27,59 @@ struct Index {
   build() {
     Scroll() {
       Column() {
-        Text('ARCVIEW').margin(pp(32)).fontSize(40).fontWeight(700)
+        Text('ARCVIEW')
+          .margin(pp(32))
+          .fontSize(50)
+          .fontWeight(900)
+          .fontStyle(FontStyle.Italic)
+          .fontColor('#2a6078')
 
         ArcProgressView({
           isDebug: this.isDebug,
-          enableGesture: this.enableGesture,
-          enableIndicator: this.enableIndicator,
-          steps: this.steps,
-          bgColor: this.bgColor,
+          steps: 15,
+          bgColor: '#0f000000',
           maxAngleDegree: this.maxAngleDegree,
           curAngleDegree: this.curAngleDegree,
-          widthVp: this.widthVp,
-          heightVp: this.heightVp,
+          enableGesture: true,
+          widthVp: pp(280),
+          heightVp: pp(280),
+          arcBgStrokeWidthVp: pp(50 + 1 + 0.5),
+          arcOuterStrokeWidthVp: pp(20),
+          arcInnerStrokeWidthVp: pp(30),
+          arcIndicatorStrokeWidthVp: pp(42),
+          arcBgWidthVp: pp(280),
+          arcOuterWidthVp: pp(280) - pp(1 * 2),
+          arcInnerWidthVp: pp(280) - pp(1 * 2) - pp(20) * 2,
+          arcIndicatorWidthVp: pp(280) - pp(1 * 2 + 4),
+          arcIndicatorGaugeOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
+          arcBgColors: [["#CCd0dae4", 0.00], ["#EEd0dae4", 1.00]],
+          arcOuterColors: ArcColors.arcOuterColors,
+          arcInnerColors: ArcColors.arcInnerColors,
+          enableIndicator: true,
+          arcIndicatorColors: [["#00000000", 0.00], ["#00000000", 1.00]],
+          buttonPlusEnable: true,
+          buttonMinusEnable: true,
+          buttonBgSize: pp(50 + 1 + 0.5) + pp(5),
+          buttonIconSize: pp(25),
+          buttonMinusBG: $r('app.media.button_bg'),
+          buttonMinusIcon: $r('app.media.icon_minus'),
+          buttonPlusBG: $r('app.media.button_bg'),
+          buttonPlusIcon: $r('app.media.icon_plus'),
+          buttonMinusOffsetX: undefined,
+          buttonMinusOffsetY: undefined,
+          buttonPlusOffsetX: undefined,
+          buttonPlusOffsetY: undefined,
           onButtonClicked: (isMinusButtonClicked: boolean, angleDegree: ANGLE_DEGREE) => {
-            Logger.info(this.TAG,
-              'ArcProgressView onButtonClicked isMinusButtonClicked=' + isMinusButtonClicked + ', angleDegree=' +
-                angleDegree);
+            Logger.info(this.TAG, 'onButtonClicked isMinus=' + isMinusButtonClicked + ', angleDegree=' + angleDegree);
           },
           onAngleDegreeChanged: (angleDegree: ANGLE_DEGREE) => {
-            Logger.info(this.TAG, 'ArcProgressView onAngleDegreeChanged angleDegree=' + angleDegree);
+            Logger.info(this.TAG, 'onAngleDegreeChanged angleDegree=' + angleDegree);
           },
           onTouchChanged: (isTouching: boolean, event: GestureEvent) => {
-            Logger.info(this.TAG,
-              'ArcProgressView onTouchChanged isTouching=' + isTouching + ', event=(' + event.fingerList[0]?.localX +
-                ',' + event.fingerList[0]?.localY + ')');
+            let fingerInfo = event.fingerList[0];
+            let localX = fingerInfo?.localX;
+            let localY = fingerInfo?.localY;
+            Logger.info(this.TAG, 'onTouchChanged isTouch=' + isTouching + ', event=(' + localX + ',' + localY + ')');
           }
         })
           .margin(pp(32))
@@ -89,6 +91,7 @@ struct Index {
             this.isDebug = !this.isDebug;
           })
       }
+      .backgroundColor('#d0dae4')
       .padding({ top: pp(80) })
       .justifyContent(FlexAlign.Start)
       .alignItems(HorizontalAlign.Center)

@@ -22,15 +22,60 @@ import ArcViewUtil, { ANGLE_DEGREE } from './ArcViewUtil';
 @Preview
 @Component
 export default struct ArcProgressView {
-  private TAG: string = '[ArcView](ArcProgressView)';
+  //region props and listeners
   @Prop
   public isDebug: boolean = false;
   @Prop
+  public steps: number = 15;
+  @Prop
+  public bgColor: string = '#BED7F2';
+  @Prop
+  public maxAngleDegree: ANGLE_DEGREE = 220; // 最大角度 度
+  @Watch('onCurAngleDegreeChanged')
+  @Link
+  public curAngleDegree: ANGLE_DEGREE; // = 280 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree] 四舍五入取整
+  @Prop
   public enableGesture: boolean = true;
   @Prop
-  public enableButtonPlus: boolean = true;
+  public widthVp: number = pp(280); // 整个画布的宽 外圆直径 vp
   @Prop
-  public enableButtonMinus: boolean = true;
+  public heightVp: number = pp(280); // 整个画布的高 外圆直径 vp
+  @Prop
+  public arcBgStrokeWidthVp: number = pp(50 + 1 + 0.5);
+  @Prop
+  public arcOuterStrokeWidthVp: number = pp(20);
+  @Prop
+  public arcInnerStrokeWidthVp: number = pp(30);
+  @Prop
+  public arcIndicatorStrokeWidthVp: number = pp(42);
+  @Prop
+  public arcBgWidthVp: number = this.widthVp;
+  @Prop
+  public arcOuterWidthVp: number = this.arcBgWidthVp - pp(1 * 2);
+  @Prop
+  public arcInnerWidthVp: number = this.arcBgWidthVp - pp(1 * 2) - this.arcOuterStrokeWidthVp * 2;
+  @Prop
+  public arcIndicatorWidthVp: number = this.arcBgWidthVp - pp(1 * 2 + 4);
+  @Prop
+  public arcIndicatorGaugeOptions: GaugeIndicatorOptions | null = { icon: $r("app.media.icon_indicator"), space: 5 };
+  @Prop
+  public arcBgColors: Array<[string, number]> = [["#CCd0dae4", 0.00], ["#CCd0dae4", 1.00]]
+  @Prop
+  public arcOuterColors: Array<[string, number]> = ArcColors.arcOuterColors;
+  @Prop
+  public arcInnerColors: Array<[string, number]> = ArcColors.arcInnerColors;
+  @Prop
+  public enableIndicator: boolean = true;
+  @Prop
+  public arcIndicatorColors: Array<[string, number]> = [["#00000000", 0.00], ["#00000000", 1.00]];
+  @Prop
+  public buttonPlusEnable: boolean = true;
+  @Prop
+  public buttonMinusEnable: boolean = true;
+  @Prop
+  public buttonBgSize: number = this.arcBgStrokeWidthVp + pp(5)
+  @Prop
+  public buttonIconSize: number = this.arcBgStrokeWidthVp + pp(5)
   @Prop
   public buttonMinusBG: Resource = $r('app.media.button_bg');
   @Prop
@@ -40,40 +85,20 @@ export default struct ArcProgressView {
   @Prop
   public buttonPlusIcon: Resource = $r('app.media.icon_plus');
   @Prop
-  public enableIndicator: boolean = true;
+  public buttonMinusOffsetX: number | undefined = undefined;
+  @Prop
+  public buttonMinusOffsetY: number | undefined = undefined;
+  @Prop
+  public buttonPlusOffsetX: number | undefined = undefined;
+  @Prop
+  public buttonPlusOffsetY: number | undefined = undefined;
+  public onAngleDegreeChanged: ((angleDegree: ANGLE_DEGREE) => void) | undefined; // angleDegree 四舍五入取整
   public onButtonClicked: ((isMinusButtonClicked: boolean, angleDegree: ANGLE_DEGREE) => void) | undefined;
   public onTouchChanged: ((isTouching: boolean, event: GestureEvent) => void) | undefined;
-  /**
-   * angleDegree 四舍五入取整
-   */
-  public onAngleDegreeChanged: ((angleDegree: ANGLE_DEGREE) => void) | undefined;
-  @Prop
-  public bgColors: Array<[string, number]> = [
-    ["#80FFFFFF", 0.00],
-    ["#80FFFFFF", 1.00],
-  ]
-  @Prop
-  public arcOuterColors: Array<[string, number]> = ArcColors.arcOuterColors;
-  @Prop
-  public arcInnerColors: Array<[string, number]> = ArcColors.arcInnerColors;
-  @Prop
-  public steps: number = 10;
-  @Prop
-  public bgColor: string = '#BED7F2';
-  @Prop
-  public maxAngleDegree: ANGLE_DEGREE = 320; // 最大角度 度
-  @Watch('onCurAngleDegreeChanged')
-  /**
-   * 四舍五入取整
-   */
-  @Link
-  public curAngleDegree: ANGLE_DEGREE; // = 320 / 10 * 5; // 当前角度 度 [minAngleDegree, maxAngleDegree]
-  @Prop
-  public widthVp: number = pp(256); // 整个画布的宽 外圆直径 vp
-  @Prop
-  public heightVp: number = pp(256); // 整个画布的高 外圆直径 vp
-  @Prop
-  public buttonSize: number = pp(34)
+  //endregion
+
+  //region utils
+  private TAG: string = '[ArcView](ArcProgressView)';
   private gestureEventAngleDegree: ANGLE_DEGREE | null = null;
   private _arcViewUtil: ArcViewUtil | undefined = undefined;
   private arcViewUtil = (): ArcViewUtil => {
@@ -83,10 +108,23 @@ export default struct ArcProgressView {
         this.maxAngleDegree,
         this.widthVp,
         this.heightVp,
-        this.buttonSize
+        this.arcBgStrokeWidthVp
       );
     }
     return this._arcViewUtil;
+  };
+  private _arcViewButtonUtil: ArcViewUtil | undefined = undefined;
+  private arcViewButtonUtil = (): ArcViewUtil => {
+    if (!this._arcViewButtonUtil) {
+      this._arcViewButtonUtil = new ArcViewUtil(
+        this.isDebug,
+        this.maxAngleDegree,
+        this.arcOuterWidthVp,
+        this.arcOuterWidthVp,
+        this.buttonBgSize
+      );
+    }
+    return this._arcViewButtonUtil;
   };
   private _arcViewUtilForIndicator: ArcViewUtil | undefined = undefined;
   private arcViewUtilForIndicator = (): ArcViewUtil => {
@@ -94,9 +132,9 @@ export default struct ArcProgressView {
       this._arcViewUtilForIndicator = new ArcViewUtil(
         this.isDebug,
         this.maxAngleDegree,
-        this.widthVp,
-        this.heightVp,
-        pp(32)
+        this.arcIndicatorWidthVp,
+        this.arcIndicatorWidthVp,
+        this.arcIndicatorStrokeWidthVp
       );
     }
     return this._arcViewUtilForIndicator;
@@ -130,15 +168,19 @@ export default struct ArcProgressView {
     this.onButtonClicked?.(false, this.curAngleDegree);
   }
   private minusButtonCenterCoordinate = () => {
-    let arcViewUtil = this.arcViewUtil();
-    return arcViewUtil.degreeToCoordinate((arcViewUtil.innerRadiusPx() + arcViewUtil.outerRadiusPx()) / 2,
-      arcViewUtil.minAngleDegree);
+    let arcViewButtonUtil = this.arcViewButtonUtil();
+    return arcViewButtonUtil.degreeToCoordinate((arcViewButtonUtil.innerRadiusPx() +
+    arcViewButtonUtil.outerRadiusPx()) / 2,
+      arcViewButtonUtil.minAngleDegree);
   }
   private plusButtonCenterCoordinate = () => {
-    let arcViewUtil = this.arcViewUtil();
-    return arcViewUtil.degreeToCoordinate((arcViewUtil.innerRadiusPx() + arcViewUtil.outerRadiusPx()) / 2,
-      arcViewUtil.maxAngleDegree);
+    let arcViewButtonUtil = this.arcViewButtonUtil();
+    return arcViewButtonUtil.degreeToCoordinate((arcViewButtonUtil.innerRadiusPx() +
+    arcViewButtonUtil.outerRadiusPx()) / 2,
+      arcViewButtonUtil.maxAngleDegree);
   }
+
+  //endregion
 
   private setCurAngleDegree(curAngleDegree: ANGLE_DEGREE) {
     //region 四舍五入取整
@@ -170,65 +212,65 @@ export default struct ArcProgressView {
     Stack({ alignContent: Alignment.Center }) {
       ArcView({
         isDebug: this.isDebug,
-        strokeWidthVp: pp(30 + 1 + 0.5),
-        colors: this.bgColors,
+        strokeWidthVp: this.arcBgStrokeWidthVp,
+        colors: this.arcBgColors,
         maxAngleDegree: this.maxAngleDegree,
         curAngleDegree: this.maxAngleDegree,
-        widthVp: this.widthVp + pp(1),
-        heightVp: this.heightVp + pp(1)
+        widthVp: this.arcBgWidthVp,
+        heightVp: this.arcBgWidthVp
       })
       ArcView({
         isDebug: this.isDebug,
-        strokeWidthVp: pp(8),
+        strokeWidthVp: this.arcOuterStrokeWidthVp,
         colors: this.arcOuterColors,
         maxAngleDegree: this.maxAngleDegree,
         curAngleDegree: this.curAngleDegree,
-        widthVp: this.widthVp,
-        heightVp: this.heightVp
+        widthVp: this.arcOuterWidthVp,
+        heightVp: this.arcOuterWidthVp
       })
       ArcView({
         isDebug: this.isDebug,
-        strokeWidthVp: pp(30 - 8),
+        strokeWidthVp: this.arcInnerStrokeWidthVp,
         colors: this.arcInnerColors,
         maxAngleDegree: this.maxAngleDegree,
         curAngleDegree: this.curAngleDegree,
-        widthVp: this.widthVp - pp(8 * 2),
-        heightVp: this.heightVp - pp(8 * 2)
+        widthVp: this.arcInnerWidthVp,
+        heightVp: this.arcInnerWidthVp
       })
       if (this.enableIndicator) {
         ArcView({
           isDebug: this.isDebug,
           strokeWidthVp: this.arcViewUtilForIndicator().strokeWidthVp,
-          colors: [["#00000000", 0.00], ["#00000000", 1.00]],
+          colors: this.arcIndicatorColors,
           enableOriginAngle: true,
           disableClip: true,
           maxAngleDegree: this.arcViewUtilForIndicator().maxAngleDegree,
           curAngleDegree: this.curAngleDegree,
-          widthVp: this.widthVp - pp(30 * 2),
-          heightVp: this.heightVp - pp(30 * 2),
-          gaugeIndicatorOptions: { icon: $r("app.media.icon_indicator"), space: 5 },
+          widthVp: this.arcIndicatorWidthVp,
+          heightVp: this.arcIndicatorWidthVp,
+          gaugeIndicatorOptions: this.arcIndicatorGaugeOptions,
         })
       }
-      if (this.enableButtonMinus) {
+      if (this.buttonMinusEnable) {
         Stack({ alignContent: Alignment.Center }) {
-          Image(this.buttonMinusBG).width(this.buttonSize).height(this.buttonSize)
-          Image(this.buttonMinusIcon).width(pp(20)).height(pp(20))
+          Image(this.buttonMinusBG).width(this.buttonBgSize).height(this.buttonBgSize)
+          Image(this.buttonMinusIcon).width(this.buttonIconSize).height(this.buttonIconSize)
         }.offset({
-          x: px2vp(this.minusButtonCenterCoordinate().xPx) - this.widthVp / 2,
-          y: px2vp(this.minusButtonCenterCoordinate().yPx) - this.heightVp / 2
+          x: px2vp(this.minusButtonCenterCoordinate().xPx) - this.widthVp / 2 + (this.buttonMinusOffsetX ?? 0),
+          y: px2vp(this.minusButtonCenterCoordinate().yPx) - this.heightVp / 2 + (this.buttonMinusOffsetY ?? 0),
         }).onClick(() => {
           Logger.info(this.TAG, 'minus clicked');
           this.onMinusButtonClicked();
         })
         .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.90 })
       }
-      if (this.enableButtonPlus) {
+      if (this.buttonPlusEnable) {
         Stack({ alignContent: Alignment.Center }) {
-          Image(this.buttonPlusBG).width(this.buttonSize).height(this.buttonSize)
-          Image(this.buttonPlusIcon).width(pp(20)).height(pp(20))
+          Image(this.buttonPlusBG).width(this.buttonBgSize).height(this.buttonBgSize)
+          Image(this.buttonPlusIcon).width(this.buttonIconSize).height(this.buttonIconSize)
         }.offset({
-          x: px2vp(this.plusButtonCenterCoordinate().xPx) - this.widthVp / 2,
-          y: px2vp(this.plusButtonCenterCoordinate().yPx) - this.heightVp / 2
+          x: px2vp(this.plusButtonCenterCoordinate().xPx) - this.widthVp / 2 + (this.buttonPlusOffsetX ?? 0),
+          y: px2vp(this.plusButtonCenterCoordinate().yPx) - this.heightVp / 2 + (this.buttonPlusOffsetY ?? 0)
         }).onClick(() => {
           Logger.info(this.TAG, 'plus clicked');
           this.onPlusButtonClicked();

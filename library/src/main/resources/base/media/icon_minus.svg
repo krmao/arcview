@@ -1,3 +1,5 @@
-<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M3.33325 10L16.6666 10" stroke="#141E33" stroke-width="2" stroke-linecap="round"/>
+<svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+     width="128" height="128">
+    <path d="M914.285714 420.571429v109.714285q0 22.857143-16 38.857143t-38.857143 16H164.571429q-22.857143 0-38.857143-16t-16-38.857143V420.571429q0-22.857143 16-38.857143t38.857143-16h694.857142q22.857143 0 38.857143 16t16 38.857143z"
+          fill="#ffffff"/>
 </svg>

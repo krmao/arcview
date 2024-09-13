@@ -18,25 +18,19 @@ export default class ArcColors {
     string,
     number
   ]> = [
-    ["#662F6CE0", 0.00],
-    ["#66FF7A05", 0.04],
-    ["#66FFBD00", 0.17],
-    ["#6629CC6A", 0.40],
-    ["#6629CC6A", 0.60],
-    ["#6616BFE0", 0.90],
-    ["#662F6CE0", 1.00],
+    ["#66D0DAE4", 0.00],
+    ["#662A6078", 0.33],
+    ["#66B9CD74", 0.66],
+    ["#66085438", 1.00],
   ]
   public static readonly arcOuterColors: Array<[
     string,
     number
   ]> = [
-    ["#2F6CE0", 0.00],
-    ["#FF7A05", 0.04],
-    ["#FFBD00", 0.17],
-    ["#29CC6A", 0.40],
-    ["#29CC6A", 0.60],
-    ["#16BFE0", 0.90],
-    ["#2F6CE0", 1.00],
+    ["#FFD0DAE4", 0.00],
+    ["#FF2A6078", 0.33],
+    ["#FFB9CD74", 0.66],
+    ["#FF085438", 1.00],
   ]
 
   public static colorsToStops(colors: Array<[string, number]>): ColorStop[] {
