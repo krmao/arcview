@@ -1,7 +1,5 @@
 # ARCVIEW
 
----
-
 ## 📘Repository
 
 - [***Github 仓库地址***](https://github.com/krmao/arcview)
@@ -172,6 +170,6 @@ ohpm install arcview
     });
   ```
 
-## 🌏Open source
+## 📘Open source
 
-Based on [***Apache License 2.0***](https://www.apache.org/licenses/LICENSE-2.0.html)
+***Based on [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)***
