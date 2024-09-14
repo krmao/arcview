@@ -1,38 +1,42 @@
-## arcview
+# ARCVIEW
 
-- [Github 仓库地址](https://github.com/krmao/arcview)
-- [OpenHarmony 三方库中心仓地址](https://ohpm.openharmony.cn/#/cn/detail/arcview)
+---
 
-### preview
+## 📘Repository
 
-- <img src="priview/preview.gif" width="320" alt="preview.gif"/>
+- [***Github 仓库地址***](https://github.com/krmao/arcview)
+- [***OpenHarmony 三方库中心仓地址***](https://ohpm.openharmony.cn/#/cn/detail/arcview)
 
-### features
+## 📘Preview
 
-- support always vertical
-- support custom max angle degree
-- support custom buttons
-- support debug log and views
-- support gesture progress in scrollView with no conflict
-- support ArcView just show
-- support ArcProgressView with gesture progress
-- support arc gradient colors clip
-- support indicator
-- support custom pp
-- support onAngleDegreeChanged params is round
-- support onTouchChanged isTouching
-- support curAngleDegree round
-- support onButtonClicked
+- <img src="library/example/preview.gif" width="320" alt="preview.gif"/>
 
-### install
+## 📘Features
+
+- ***Support always vertical***
+- ***Support custom max angle degree***
+- ***Support custom buttons***
+- ***Support debug log and views***
+- ***Support gesture progress in scrollView with no conflict***
+- ***Support ArcView just show***
+- ***Support ArcProgressView with gesture progress***
+- ***Support arc gradient colors clip***
+- ***Support indicator***
+- ***Support custom pp***
+- ***Support onAngleDegreeChanged params is round***
+- ***Support onTouchChanged isTouching***
+- ***Support curAngleDegree round***
+- ***Support onButtonClicked***
+
+## 📘Install
 
 ```shell
 ohpm install arcview
 ```
 
-### usage
+## 📘Usage
 
-- ArcProgressView
+- ***ArcProgressView***
     ```typescript
     import { ANGLE_DEGREE, ArcColors, ArcProgressView, getDisplayWidth, pp, setCustomPP } from 'arcview';
 
@@ -140,7 +144,7 @@ ohpm install arcview
     }
     ```
 
-- ArcView
+- ***ArcView***
     ```typescript
     import { ArcProgressView, ArcView, pp } from 'arcview';
     
@@ -158,13 +162,16 @@ ohpm install arcview
       })
     ```
 
-- optional custom pp
+- ***Optional custom pp***
     ```typescript
     import { ANGLE_DEGREE, ArcColors, ArcProgressView, getDisplayWidth, pp, setCustomPP } from 'arcview';
     
-    // optional: custom pp
     setCustomPP((px: number, designWidthPx: number): number => {
       let displayWidth: number | undefined = getDisplayWidth();
       return !displayWidth ? px : px2vp(px / (designWidthPx / displayWidth));
     });
   ```
+
+## 🌏Open source
+
+Based on [***Apache License 2.0***](https://www.apache.org/licenses/LICENSE-2.0.html)
