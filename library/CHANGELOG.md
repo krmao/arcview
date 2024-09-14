@@ -1,3 +1,8 @@
+## 1.0.0
+
+1. support more props
+2. optimized readme
+
 ## 0.0.11
 
 1. support onAngleDegreeChanged params is round
