@@ -7,7 +7,7 @@
 
 ## 📘Preview
 
-- <img src="library/example/preview.gif" width="320" alt="preview.gif"/>
+- ![preview.gif](library/example/preview.gif)
 
 ## 📘Features
 

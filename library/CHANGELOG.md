@@ -1,3 +1,7 @@
+## 1.0.1
+
+1. 解决 open harmony 三方库中心预览图不显示的问题
+
 ## 1.0.0
 
 1. support more props
