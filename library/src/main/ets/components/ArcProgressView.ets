@@ -119,8 +119,8 @@ export default struct ArcProgressView {
       this._arcViewButtonUtil = new ArcViewUtil(
         this.isDebug,
         this.maxAngleDegree,
-        this.arcOuterWidthVp,
-        this.arcOuterWidthVp,
+        this.arcBgWidthVp,
+        this.arcBgWidthVp,
         this.buttonBgSize
       );
     }
