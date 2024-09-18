@@ -57,7 +57,7 @@ export default struct ArcProgressView {
   @Prop
   public arcIndicatorWidthVp: number = this.arcBgWidthVp - pp(1 * 2 + 4);
   @Prop
-  public arcIndicatorGaugeOptions: GaugeIndicatorOptions | null = { icon: $r("app.media.icon_indicator"), space: 5 };
+  public arcIndicatorGaugeOptions: GaugeIndicatorOptions | null = { icon: $r("app.media.arcview_icon_indicator"), space: 5 };
   @Prop
   public arcBgColors: Array<[string, number]> = [["#CCd0dae4", 0.00], ["#CCd0dae4", 1.00]]
   @Prop
@@ -77,13 +77,13 @@ export default struct ArcProgressView {
   @Prop
   public buttonIconSize: number = this.arcBgStrokeWidthVp + pp(5)
   @Prop
-  public buttonMinusBG: Resource = $r('app.media.button_bg');
+  public buttonMinusBG: Resource = $r("app.media.arcview_button_bg");
   @Prop
-  public buttonMinusIcon: Resource = $r('app.media.icon_minus');
+  public buttonMinusIcon: Resource = $r("app.media.arcview_icon_minus");
   @Prop
-  public buttonPlusBG: Resource = $r('app.media.button_bg');
+  public buttonPlusBG: Resource = $r("app.media.arcview_button_bg");
   @Prop
-  public buttonPlusIcon: Resource = $r('app.media.icon_plus');
+  public buttonPlusIcon: Resource = $r("app.media.arcview_icon_plus");
   @Prop
   public buttonMinusOffsetX: number | undefined = undefined;
   @Prop
